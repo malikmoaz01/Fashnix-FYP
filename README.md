@@ -49,15 +49,3 @@ Follow these steps to get the project up and running in your local environment:
    python manage.py runserver
    \`\`\`
 
-## Contributing
-If you would like to contribute to this project, feel free to make changes and submit a pull request.
-
-## License
-This project is licensed under [License Name].
-
-## Acknowledgements
-- [Machine Learning Resources]
-- [Other Contributors]
-EOL
-
-echo "README.md file has been created successfully."
