@@ -20,31 +20,31 @@ This project is an E-commerce application that uses machine learning to provide 
 Follow these steps to get the project up and running in your local environment:
 
 1. **Clone the repository**:
-   \`\`\`
-   git clone https://github.com/malikmoaz01/Final-Year-Project
-   cd Final-Year-Project
-   \`\`\`
+    ```
+    git clone https://github.com/malikmoaz01/Final-Year-Project
+    cd Final-Year-Project
+    ```
 
 2. **Install dependencies**:
    - For the frontend:
-   \`\`\`
-   cd frontend
-   npm install
-   \`\`\`
+    ```
+    cd frontend
+    npm install
+    ```
 
    - For the backend:
-   \`\`\`
-   cd backend
-   pip install -r requirements.txt
-   \`\`\`
+    ```
+    cd backend
+    pip install -r requirements.txt
+    ```
 
 3. **Run the application**:
    - For the frontend:
-   \`\`\`
-   npm start
-   \`\`\`
+    ```
+    npm start
+    ```
 
    - For the backend:
-   \`\`\`
-   python manage.py runserver
-   \`\`\`
+    ```
+    python manage.py runserver
+    ```
