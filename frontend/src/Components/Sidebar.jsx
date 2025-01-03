@@ -8,7 +8,7 @@ import libraryLogo from "../assets/library.png";
 import nkLogo from "../assets/nk.png";
 import reportsLogo from "../assets/reports.png";
 import settingsLogo from "../assets/setting.png";
-import cosmoLogo from "../assets/cosmo.png";
+import Logo from "../assets/Logo.png";
 import gptLogo from '../assets/gpt.png'
 
 
@@ -34,7 +34,7 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar w-1/5 md:h-[100vh] bg-gradient-to-b from-[#1F2937] to-[#4B5563] sticky top-0 h-[500px]">
-      <img src={cosmoLogo} alt="Cosmo Logo" className="cosmoImg md:m-8 m-2 w-12 md:w-24" />
+      <img src={Logo} alt="Cosmo Logo" className="cosmoImg md:m-3 w-24 md:w-32 h-auto object-contain" />
 
       <ul className="flex flex-col p-2 items-center md:items-start">
         {elements.map((element, index) => (

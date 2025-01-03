@@ -1,44 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Dashboard = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const cards = [
+    { name: "Total Users", value: "10" },
+    { name: "Total Orders", value: "52" },
+    { name: "Sales Stats", value: "Rs 18000" },
+    { name: "Products in Stock", value: "39" },
+    { name: "Pending Orders", value: "2" },
+  ];
+
+  const highlightText = (text) => {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi');  // Case insensitive matching
+    return text.split(regex).map((part, index) =>
+      part.toLowerCase() === searchTerm.toLowerCase() ? (
+        <span key={index} className="bg-red-500 text-white">{part}</span>
+      ) : part
+    );
+  };
+
   return (
     <div className="bg-gradient-to-b from-[#1F2937] to-[#4B5563] min-h-screen">
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <h2 className="text-3xl font-bold text-[#F9FAFB] mb-6">Overview</h2>
 
+        {/* Search Bar */}
+        <div className="mb-4 flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-1/2 p-3 bg-[#374151] text-white rounded-md"
+          />
+        </div>
+
         {/* Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Total Users */}
-          <div className="bg-[#374151] rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-[#9CA3AF]">Total Users</h3>
-            <p className="text-3xl font-bold text-[#F9FAFB] mt-2">1,234</p>
-          </div>
-
-          {/* Total Orders */}
-          <div className="bg-[#374151] rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-[#9CA3AF]">Total Orders</h3>
-            <p className="text-3xl font-bold text-[#F9FAFB] mt-2">567</p>
-          </div>
-
-          {/* Sales Stats */}
-          <div className="bg-[#374151] rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-[#9CA3AF]">Sales Stats</h3>
-            <p className="text-3xl font-bold text-[#F9FAFB] mt-2">$12,345</p>
-          </div>
-
-          {/* Products in Stock */}
-          <div className="bg-[#374151] rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-[#9CA3AF]">Products in Stock</h3>
-            <p className="text-3xl font-bold text-[#F9FAFB] mt-2">123</p>
-          </div>
-
-          {/* Pending Orders */}
-          <div className="bg-[#374151] rounded-lg shadow-md p-6 col-span-1 md:col-span-2 lg:col-span-1">
-            <h3 className="text-lg font-semibold text-[#9CA3AF]">Pending Orders</h3>
-            <p className="text-3xl font-bold text-[#F9FAFB] mt-2">45</p>
-          </div>
+          {cards.map((card) => (
+            <div
+              key={card.name}
+              className="bg-[#374151] rounded-lg shadow-md p-6"
+            >
+              <h3 className="text-lg font-semibold text-[#9CA3AF]">
+                {highlightText(card.name)}
+              </h3>
+              <p className="text-3xl font-bold text-[#F9FAFB] mt-2">
+                {highlightText(card.value)}
+              </p>
+            </div>
+          ))}
         </div>
+
+        {/* No Found Message */}
+        {searchTerm && !cards.some(card =>
+          card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          card.value.toLowerCase().includes(searchTerm.toLowerCase())
+        ) && (
+          <p className="text-center text-[#F9FAFB] mt-4">No Found</p>
+        )}
 
         {/* Additional Section */}
         <div className="mt-10">

@@ -1,31 +1,87 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import searchLogo from '../assets/search.png';
 import alertLogo from '../assets/alert.png';
 import messageLogo from '../assets/message.png';
 import captureLogo from '../assets/camera.png';
 
-const Header = () => {
+const Header = ({ onLogout }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
+
+  const pages = [
+    { name: 'Dashboard', path: '/' },
+    { name: 'Product Management', path: '/product_management' },
+    { name: 'Order Management', path: '/order_management' },
+    { name: 'User Management', path: '/user_management' },
+    { name: 'Sales Reports', path: '/sales_reports' },
+    { name: 'Discount Management', path: '/discount_management' },
+    { name: 'Product Recommendation', path: '/product_recommendation' },
+    { name: 'Shipping Management', path: '/shipping_management' },
+    { name: 'Settings', path: '/settings' },
+  ];
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value === '') {
+      setSearchResults([]);
+      return;
+    }
+    const filteredResults = pages.filter(page =>
+      page.name.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+    setSearchResults(filteredResults);
+  };
+
+  const handleSearchClick = (path) => {
+    setSearchTerm('');
+    setSearchResults([]);
+    navigate(path);
+  };
+
   return (
     <div className='header h-1/7 w-full flex justify-between bg-gradient-to-b from-[#1F2937] to-[#4B5563] sticky top-0'>
       <div className="left m-5 p-1 md:h-10 md:w-72 flex items-center gap-2 border border-solid border-[#374151] rounded-lg">
         <img src={searchLogo} alt="Search Icon" className='md:w-6 md:h-6 w-3 h-3'/>
-        <input 
-          type="text" 
-          placeholder='Type to Search...' 
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder='Type to Search...'
           className='md:h-8 flex-1 md:text-base text-[#9CA3AF] font-light outline-none bg-transparent' 
         />
       </div>
+      {searchResults.length > 0 && (
+        <div className="search-results absolute bg-white w-full border border-t-0 border-[#374151] rounded-b-lg"
+             style={{
+               top: '-40px', // Positioning search results upwards
+               zIndex: 10 // Ensure search results are above other elements
+             }}>
+          <ul>
+            {searchResults.map((result, index) => (
+              <li
+                key={index}
+                onClick={() => handleSearchClick(result.path)}
+                className="p-2 cursor-pointer hover:bg-[#F3F4F6]"
+              >
+                {result.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="right hidden md:flex m-5 h-[5svh] gap-6 items-center">
         <img src={alertLogo} alt="Alert Logo" className='w-6 h-6' />
         <img src={messageLogo} alt="Message Logo" className='w-6 h-6' />
         <img src={captureLogo} alt="Capture Logo" className='w-6 h-6' />
       </div>
       <div className='m-5 flex gap-2'>
-        <button className="bg-transparent hover:bg-[#FF7849] text-[#F9FAFB] font-semibold py-2 px-4 border border-[#FF7849] rounded-full">
-          Login
-        </button>
-        <button className="bg-transparent hover:bg-[#FF7849] text-[#F9FAFB] font-semibold py-2 px-4 border border-[#FF7849] rounded-full">
-          Sign Up
+        <button 
+          className="bg-transparent hover:bg-[#FF7849] text-[#F9FAFB] font-semibold py-2 px-4 border border-[#FF7849] rounded-full"
+          onClick={onLogout}
+        >
+          Log Out
         </button>
       </div>
     </div>
