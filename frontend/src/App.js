@@ -78,26 +78,77 @@
 
 // export default App;
 
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Components/User/Header';
 import Navbar from './Components/User/Navbar';
-import Signup from './Components/User/SignupForm'; // Replace with your actual Signup component
-import Login from './Components/User/LoginForm';   // Replace with your actual Login component
+import CategoriesDropdown from './Components/User/CategoriesDropdown';
+import Signup from './Components/User/SignupForm';
+import Login from './Components/User/LoginForm';
+import Shirts from './Components/User/Menswear/Shirts';
+import TShirts from './Components/User/Menswear/TShirts';
+import Jeans from './Components/User/Menswear/Jeans';
+import Jackets from './Components/User/Menswear/Jackets';
+import Dresses from './Components/User/Womenswear/Dresses';
+import Tops from './Components/User/Womenswear/Tops';
+import Skirts from './Components/User/Womenswear/Skirts';
+import Sarees from './Components/User/Womenswear/Sarees';
+import KidsTShirts from './Components/User/Kidswear/TShirts';
+import Shorts from './Components/User/Kidswear/Shorts';
+import KidsDresses from './Components/User/Kidswear/Dresses';
+import Nightwear from './Components/User/Kidswear/Nightwear';
+import Bags from './Components/User/Accessories/Bags';
+import Shoes from './Components/User/Accessories/Shoes';
+import Watches from './Components/User/Accessories/Watches';
+import Jewelry from './Components/User/Accessories/Jewelry';
 
 const App = () => {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const handleNavigate = () => {
+        setDropdownOpen(false);
+    };
+
     return (
         <Router>
             <div>
-                {/* Header and Navbar are always visible */}
+                {/* Header and Navbar */}
                 <Header />
-                <Navbar />
+                <Navbar onToggleDropdown={() => setDropdownOpen(!dropdownOpen)} />
 
-                {/* Conditional rendering for main content */}
+                {/* Dropdown for categories */}
+                {dropdownOpen && <CategoriesDropdown onNavigate={handleNavigate} />}
+
+                {/* Main content */}
                 <main>
                     <Routes>
+                        {/* Signup and Login */}
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/login" element={<Login />} />
+
+                        {/* Menswear */}
+                        <Route path="/menswear/shirts" element={<Shirts />} />
+                        <Route path="/menswear/tshirts" element={<TShirts />} />
+                        <Route path="/menswear/jeans" element={<Jeans />} />
+                        <Route path="/menswear/jackets" element={<Jackets />} />
+
+                        {/* Womenswear */}
+                        <Route path="/womenswear/dresses" element={<Dresses />} />
+                        <Route path="/womenswear/tops" element={<Tops />} />
+                        <Route path="/womenswear/skirts" element={<Skirts />} />
+                        <Route path="/womenswear/sarees" element={<Sarees />} />
+
+                        {/* Kidswear */}
+                        <Route path="/kidswear/tshirts" element={<KidsTShirts />} />
+                        <Route path="/kidswear/shorts" element={<Shorts />} />
+                        <Route path="/kidswear/dresses" element={<KidsDresses />} />
+                        <Route path="/kidswear/nightwear" element={<Nightwear />} />
+
+                        {/* Accessories */}
+                        <Route path="/accessories/bags" element={<Bags />} />
+                        <Route path="/accessories/shoes" element={<Shoes />} />
+                        <Route path="/accessories/watches" element={<Watches />} />
+                        <Route path="/accessories/jewelry" element={<Jewelry />} />
                     </Routes>
                 </main>
             </div>

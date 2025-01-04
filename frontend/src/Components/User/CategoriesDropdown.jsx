@@ -1,70 +1,109 @@
-import { useState } from 'react';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
-const CategoriesDropdown = () => {
-    const [activeCategory, setActiveCategory] = useState(null);
+const CategoriesDropdown = ({ onNavigate }) => {
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const categories = {
-        Menswear: ['Shirts', 'T-Shirts', 'Jeans', 'Jackets'],
-        Womenswear: ['Dresses', 'Tops', 'Skirts', 'Sarees'],
-        Kidswear: ['T-Shirts', 'Shorts', 'Dresses', 'Nightwear'],
-        Accessories: ['Bags', 'Shoes', 'Watches', 'Jewelry'],
+  const categories = {
+    Menswear: [
+      { name: "Shirts", path: "/menswear/shirts" },
+      { name: "T-Shirts", path: "/menswear/tshirts" },
+      { name: "Jeans", path: "/menswear/jeans" },
+      { name: "Jackets", path: "/menswear/jackets" },
+    ],
+    Womenswear: [
+      { name: "Dresses", path: "/womenswear/dresses" },
+      { name: "Tops", path: "/womenswear/tops" },
+      { name: "Skirts", path: "/womenswear/skirts" },
+      { name: "Sarees", path: "/womenswear/sarees" },
+    ],
+    Kidswear: [
+      { name: "T-Shirts", path: "/kidswear/tshirts" },
+      { name: "Shorts", path: "/kidswear/shorts" },
+      { name: "Dresses", path: "/kidswear/dresses" },
+      { name: "Nightwear", path: "/kidswear/nightwear" },
+    ],
+    Accessories: [
+      { name: "Bags", path: "/accessories/bags" },
+      { name: "Shoes", path: "/accessories/shoes" },
+      { name: "Watches", path: "/accessories/watches" },
+      { name: "Jewelry", path: "/accessories/jewelry" },
+    ],
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".dropdown")) {
+        setIsDropdownOpen(false);
+        setActiveCategory(null);
+      }
     };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
-    return (
-        <section className="absolute left-0 right-0 z-10 w-full border-b border-r border-l bg-white">
-            <div className="mx-auto flex max-w-[1200px] py-10">
-                {/* Categories List */}
-                <div className="w-[300px] border-r">
-                    <ul className="px-5">
-                        {Object.keys(categories).map((category) => (
-                            <li
-                                key={category}
-                                onMouseEnter={() => setActiveCategory(category)}
-                                onClick={() => setActiveCategory(category)}
-                                className="cursor-pointer flex items-center gap-2 py-2 px-3 hover:bg-neutral-100"
-                            >
-                                {category}
-                                <span className="ml-auto">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="h-4 w-4"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                                        />
-                                    </svg>
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+  const toggleCategory = (category) => {
+    if (activeCategory === category) {
+      setIsDropdownOpen(false); // Close if clicked again
+      setActiveCategory(null);
+    } else {
+      setActiveCategory(category);
+      setIsDropdownOpen(true); // Open if clicked
+    }
+  };
 
-                {/* Sub-categories Display */}
-                <div className="flex w-full justify-between">
-                    {activeCategory && (
-                        <div className="flex gap-6">
-                            <div className="mx-5">
-                                <p className="font-medium text-blue-900">{activeCategory.toUpperCase()}</p>
-                                <ul className="text-sm leading-8">
-                                    {categories[activeCategory].map((subcategory) => (
-                                        <li key={subcategory}>
-                                            <a href={`#${subcategory.toLowerCase()}`}>{subcategory}</a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    )}
-                </div>
+  return (
+    <section className="absolute left-0 right-0 z-10 w-full border-b border-r border-l bg-white">
+      <div className="mx-auto flex max-w-[1200px] py-10 dropdown">
+        {/* Categories List */}
+        <div className="w-[300px] border-r">
+          <ul className="px-5">
+            {Object.keys(categories).map((category) => (
+              <li
+                key={category}
+                onClick={() => toggleCategory(category)}
+                className="cursor-pointer flex items-center gap-2 py-2 px-3 hover:bg-neutral-100"
+              >
+                {category}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Sub-categories Display */}
+        <div className="flex w-full justify-between">
+          {isDropdownOpen && activeCategory && (
+            <div className="flex gap-6">
+              <div className="mx-5">
+                <p className="font-medium text-blue-900">
+                  {activeCategory.toUpperCase()}
+                </p>
+                <ul className="text-sm leading-8">
+                  {categories[activeCategory].map((subcategory) => (
+                    <li key={subcategory.name}>
+                      <Link
+                        to={subcategory.path}
+                        onClick={() => {
+                          setIsDropdownOpen(false); // Close dropdown on navigation
+                          onNavigate();
+                        }}
+                        className="hover:underline"
+                      >
+                        {subcategory.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-        </section>
-    );
+          )}
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default CategoriesDropdown;
