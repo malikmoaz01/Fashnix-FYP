@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import analysisLogo from "../assets/analysis.png";
-import dashboardLogo from "../assets/dashboard.png";
-import ingestionLogo from "../assets/ingestion.png";
-import indicatorLogo from "../assets/indicator.png";
-import libraryLogo from "../assets/library.png";
-import nkLogo from "../assets/nk.png";
-import reportsLogo from "../assets/reports.png";
-import settingsLogo from "../assets/setting.png";
-import Logo from "../assets/Logo.png";
-import gptLogo from '../assets/gpt.png'
+import analysisLogo from "../../assets/analysis.png";
+import dashboardLogo from "../../assets/dashboard.png";
+import ingestionLogo from "../../assets/ingestion.png";
+import indicatorLogo from "../../assets/indicator.png";
+import libraryLogo from "../../assets/library.png";
+import nkLogo from "../../assets/nk.png";
+import reportsLogo from "../../assets/reports.png";
+import settingsLogo from "../../assets/setting.png";
+import Logo from "../../assets/Logo.png";
+import gptLogo from '../../assets/gpt.png'
 
 
 const Sidebar = () => {

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import searchLogo from '../assets/search.png';
-import alertLogo from '../assets/alert.png';
-import messageLogo from '../assets/message.png';
-import captureLogo from '../assets/camera.png';
+import searchLogo from '../../assets/search.png';
+import alertLogo from '../../assets/alert.png';
+import messageLogo from '../../assets/message.png';
+import captureLogo from '../../assets/camera.png';
 
 const Header = ({ onLogout }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [activeResult, setActiveResult] = useState(null);  // Track active result
   const navigate = useNavigate();
 
   const pages = [
@@ -40,6 +41,14 @@ const Header = ({ onLogout }) => {
     navigate(path);
   };
 
+  const handleMouseEnter = (index) => {
+    setActiveResult(index); // Highlight active result on hover
+  };
+
+  const handleMouseLeave = () => {
+    setActiveResult(null); // Reset active result when mouse leaves
+  };
+
   return (
     <div className='header h-1/7 w-full flex justify-between bg-gradient-to-b from-[#1F2937] to-[#4B5563] sticky top-0'>
       <div className="left m-5 p-1 md:h-10 md:w-72 flex items-center gap-2 border border-solid border-[#374151] rounded-lg">
@@ -55,15 +64,19 @@ const Header = ({ onLogout }) => {
       {searchResults.length > 0 && (
         <div className="search-results absolute bg-white w-full border border-t-0 border-[#374151] rounded-b-lg"
              style={{
-               top: '-40px', // Positioning search results upwards
-               zIndex: 10 // Ensure search results are above other elements
+               top: '50px', // Ensure the results appear below the search bar
+               zIndex: 10 // Keep results above other elements
              }}>
           <ul>
             {searchResults.map((result, index) => (
               <li
                 key={index}
                 onClick={() => handleSearchClick(result.path)}
-                className="p-2 cursor-pointer hover:bg-[#F3F4F6]"
+                onMouseEnter={() => handleMouseEnter(index)} // On hover
+                onMouseLeave={handleMouseLeave} // On mouse leave
+                className={`p-2 cursor-pointer hover:bg-[#FF7849] ${
+                  activeResult === index ? 'bg-[#FF7849] text-[#F9FAFB]' : ''
+                }`} // Add orange background on hover and active state
               >
                 {result.name}
               </li>
