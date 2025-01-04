@@ -8,18 +8,18 @@ import captureLogo from '../../assets/camera.png';
 const Header = ({ onLogout }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [activeResult, setActiveResult] = useState(null);  // Track active result
+  const [activeResult, setActiveResult] = useState(null);  
   const navigate = useNavigate();
 
   const pages = [
     { name: 'Dashboard', path: '/' },
-    { name: 'Product Management', path: '/product_management' },
-    { name: 'Order Management', path: '/order_management' },
-    { name: 'User Management', path: '/user_management' },
-    { name: 'Sales Reports', path: '/sales_reports' },
-    { name: 'Discount Management', path: '/discount_management' },
-    { name: 'Product Recommendation', path: '/product_recommendation' },
-    { name: 'Shipping Management', path: '/shipping_management' },
+    { name: 'Product Management', path: '/admin/product_management' },
+    { name: 'Order Management', path: '/admin/order_management' },
+    { name: 'User Management', path: '/admin/user_management' },
+    { name: 'Sales Reports', path: '/admin/sales_reports' },
+    { name: 'Discount Management', path: '/admin/discount_management' },
+    { name: 'Product Recommendation', path: '/admin/product_recommendation' },
+    { name: 'Shipping Management', path: '/admin/shipping_management' },
     { name: 'Settings', path: '/settings' },
   ];
 
@@ -42,11 +42,11 @@ const Header = ({ onLogout }) => {
   };
 
   const handleMouseEnter = (index) => {
-    setActiveResult(index); // Highlight active result on hover
+    setActiveResult(index); 
   };
 
   const handleMouseLeave = () => {
-    setActiveResult(null); // Reset active result when mouse leaves
+    setActiveResult(null); 
   };
 
   return (
@@ -64,19 +64,19 @@ const Header = ({ onLogout }) => {
       {searchResults.length > 0 && (
         <div className="search-results absolute bg-white w-full border border-t-0 border-[#374151] rounded-b-lg"
              style={{
-               top: '50px', // Ensure the results appear below the search bar
-               zIndex: 10 // Keep results above other elements
+               top: '50px', 
+               zIndex: 10 
              }}>
           <ul>
             {searchResults.map((result, index) => (
               <li
                 key={index}
                 onClick={() => handleSearchClick(result.path)}
-                onMouseEnter={() => handleMouseEnter(index)} // On hover
-                onMouseLeave={handleMouseLeave} // On mouse leave
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave} 
                 className={`p-2 cursor-pointer hover:bg-[#FF7849] ${
                   activeResult === index ? 'bg-[#FF7849] text-[#F9FAFB]' : ''
-                }`} // Add orange background on hover and active state
+                }`} 
               >
                 {result.name}
               </li>

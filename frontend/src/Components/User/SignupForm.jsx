@@ -38,9 +38,32 @@ const SignupForm = () => {
     alert("Account created successfully!");
   };
 
+  // Inline styles for blinking effect
+  const blinkingStyle = {
+    animation: "blink 1s infinite",
+    border: "4px solidrgba(255, 106, 250, 0.24)", // Blue 900
+  };
+
+  const styles = `
+    @keyframes blink {
+            0%, 100% {
+              box-shadow: 0 0 10px 2px rgba(59, 130, 246, 0.8);
+            }
+            50% {
+              box-shadow: 0 0 20px 5px rgba(59, 130, 246, 1);
+            }
+          }
+  `;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 dark:bg-gray-800 dark:border-gray-700 border border-gray-300">
+      {/* Style for blinking animation */}
+      <style>{styles}</style>
+
+      <div
+        className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 dark:bg-gray-800 dark:border-gray-700 border border-gray-300"
+        style={blinkingStyle}
+      >
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-4">
           Create an account
         </h1>
@@ -162,16 +185,16 @@ const SignupForm = () => {
                 d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
               ></path>
             </svg>
-            Sign up with Google
+            Continue with Google
           </button>
-          <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-            Already have an account?{" "}
+          <p className="text-sm font-light text-gray-500">
+           Have an account?{" "}
             <a
               href="#"
               onClick={() => navigate("/login")}
-              className="font-medium text-blue-900 hover:underline "
+              className="font-medium text-blue-900 hover:underline"
             >
-              Login here
+              Login 
             </a>
           </p>
         </form>
