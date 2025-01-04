@@ -6,8 +6,8 @@ const Header = () => {
 
     return (
         <div>
-            {/* Sticky Header Section */}
-            <header className="w-full flex h-16 max-w-[1200px] items-center justify-between px-5 bg-white sticky top-0 z-50 shadow-md">
+            {/* Header Section */}
+            <header className="sticky top-0 z-10 mx-auto w-full flex h-16 max-w-[1200px] items-center justify-between px-5 bg-white">
                 <a href="#">
                     <img
                         className="cursor-pointer h-[55px] w-auto ml-24"

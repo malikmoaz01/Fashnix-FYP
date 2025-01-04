@@ -13,7 +13,7 @@ const Dashboard = () => {
 
   const highlightText = (text) => {
     if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');  // Case insensitive matching
+    const regex = new RegExp(`(${searchTerm})`, 'gi');  
     return text.split(regex).map((part, index) =>
       part.toLowerCase() === searchTerm.toLowerCase() ? (
         <span key={index} className="bg-red-500 text-white">{part}</span>

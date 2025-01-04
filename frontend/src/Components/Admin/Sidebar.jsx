@@ -15,15 +15,15 @@ import gptLogo from '../../assets/gpt.png'
 const Sidebar = () => {
   const location = useLocation();
   const elements = [
-    { elementName: "Dashboard", elementLogo: dashboardLogo, elementNav: "/" },
-    { elementName: "Product Management", elementLogo: ingestionLogo, elementNav: "/product_management" },
-    { elementName: "Order Management", elementLogo: reportsLogo, elementNav: "/order_management" },
-    { elementName: "User Management", elementLogo: indicatorLogo, elementNav: "/user_management" },
-    { elementName: "Sales Reports", elementLogo: analysisLogo, elementNav: "/sales_reports" },
-    { elementName: "Discount Management", elementLogo: libraryLogo, elementNav: "/discount_management" },
-    { elementName: "Product Recommendations", elementLogo: gptLogo, elementNav: "/product_recommendation" },
-    { elementName: "Shipping Management", elementLogo: nkLogo, elementNav: "/shipping_management" },
-    { elementName: "Settings", elementLogo: settingsLogo, elementNav: "/settings" },
+    { elementName: "Dashboard", elementLogo: dashboardLogo, elementNav: "/admin/dashboard" },
+    { elementName: "Product Management", elementLogo: ingestionLogo, elementNav: "/admin/product_management" },
+    { elementName: "Order Management", elementLogo: reportsLogo, elementNav: "/admin/order_management" },
+    { elementName: "User Management", elementLogo: indicatorLogo, elementNav: "/admin/user_management" },
+    { elementName: "Sales Reports", elementLogo: analysisLogo, elementNav: "/admin/sales_reports" },
+    { elementName: "Discount Management", elementLogo: libraryLogo, elementNav: "/admin/discount_management" },
+    { elementName: "Product Recommendations", elementLogo: gptLogo, elementNav: "/admin/product_recommendation" },
+    { elementName: "Shipping Management", elementLogo: nkLogo, elementNav: "/admin/shipping_management" },
+    { elementName: "Settings", elementLogo: settingsLogo, elementNav: "/admin/settings" },
   ];
 
   const [activeElement, setActiveElement] = useState(location.pathname);

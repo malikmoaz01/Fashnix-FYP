@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (onLogin(username, password)) {
-      navigate('/');
+      navigate('/admin/dashboard');
     } else {
       setError('Invalid username or password');
     }

@@ -168,7 +168,7 @@ const SignupForm = () => {
           </button>
           <button
             type="button"
-            className="w-full text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            className="w-full text-gray-900 bg-white border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 sm:px-5 sm:py-2.5 text-center flex items-center justify-center"
           >
             <svg
               className="mr-2 -ml-1 w-4 h-4"
@@ -188,13 +188,13 @@ const SignupForm = () => {
             Continue with Google
           </button>
           <p className="text-sm font-light text-gray-500">
-           Have an account?{" "}
+            Have an account?{" "}
             <a
               href="#"
               onClick={() => navigate("/login")}
               className="font-medium text-blue-900 hover:underline"
             >
-              Login 
+              Login
             </a>
           </p>
         </form>

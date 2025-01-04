@@ -12,7 +12,7 @@ const Header = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const pages = [
-    { name: 'Dashboard', path: '/' },
+    { name: 'Dashboard', path: '/admin/dashboard' },
     { name: 'Product Management', path: '/admin/product_management' },
     { name: 'Order Management', path: '/admin/order_management' },
     { name: 'User Management', path: '/admin/user_management' },
@@ -20,7 +20,7 @@ const Header = ({ onLogout }) => {
     { name: 'Discount Management', path: '/admin/discount_management' },
     { name: 'Product Recommendation', path: '/admin/product_recommendation' },
     { name: 'Shipping Management', path: '/admin/shipping_management' },
-    { name: 'Settings', path: '/settings' },
+    { name: 'Settings', path: '/admin/settings' },
   ];
 
   const handleSearch = (e) => {
