@@ -85,6 +85,10 @@ import Navbar from './Components/User/Navbar';
 import CategoriesDropdown from './Components/User/CategoriesDropdown';
 import Signup from './Components/User/SignupForm';
 import Login from './Components/User/LoginForm';
+
+
+// Categories Images & Routes 
+
 import Shirts from './Components/User/Menswear/Shirts';
 import TShirts from './Components/User/Menswear/TShirts';
 import Jeans from './Components/User/Menswear/Jeans';
@@ -105,6 +109,9 @@ import BelowHero from './Components/User/BelowHero';
 import Recommended from './Components/User/Recomended';
 import SaleComponent from './Components/User/SaleComponent';
 import About from './Components/User/About';
+import HeroSection from './Components/User/HeroSection';
+import BelowHero1 from './Components/User/BelowHero1';
+import Footer from './Components/User/Footer';
 
 const App = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -119,8 +126,11 @@ const App = () => {
                 {/* Header and Navbar */}
                 <Header />
                 <Navbar onToggleDropdown={() => setDropdownOpen(!dropdownOpen)} />
-                    <SaleComponent/>
+                <HeroSection/>
+                <BelowHero1/>
+                <SaleComponent/>
                 <BelowHero/>
+
                 <Recommended/>
                 {/* Dropdown for categories */}
                 {dropdownOpen && <CategoriesDropdown onNavigate={handleNavigate} />}
@@ -158,6 +168,7 @@ const App = () => {
                         <Route path="/accessories/jewelry" element={<Jewelry />} />
                     </Routes>
                 </main>
+                <Footer/>
             </div>
         </Router>
     );

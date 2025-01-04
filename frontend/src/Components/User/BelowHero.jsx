@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import menTshirtImg from '../../assets/Tshirt.jpeg';
-import womenDressImg from '../../assets/Tshirt.jpeg';
-import kidsWearImg from '../../assets/Tshirt.jpeg';
-import menShoesImg from '../../assets/Tshirt.jpeg';
-import womenShoesImg from '../../assets/Tshirt.jpeg';
-import accessoriesImg from '../../assets/Tshirt.jpeg';
+import menTshirtImg from '../../assets/Categories/TShirt.png';
+import womenDressImg from '../../assets/Categories/Women.jpg';
+import kidsWearImg from '../../assets/Categories/Kids.jpeg';
+import menShoesImg from '../../assets/Categories/Shoes.jpg';
+import womenShoesImg from '../../assets/Categories/women.png';
+import accessoriesImg from '../../assets/Categories/Watches.jpg';
 
 const BelowHero = () => {
   const navigate = useNavigate();
@@ -20,30 +20,49 @@ const BelowHero = () => {
   ];
 
   return (
-    
-    <section className="mx-auto grid max-w-[1200px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 mt-5">
-        
-      {categories.map((category, index) => (
-        <div
-          key={index}
-          className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md"
-          onClick={() => navigate(category.path)}
-          style={{ aspectRatio: '3 / 2' }} // Rectangle shape
-        >
-          {/* Background Image */}
-          <img
-            className="h-full w-full object-cover brightness-50 transition-all duration-500 group-hover:brightness-100 group-hover:scale-105"
-            src={category.image}
-            alt={`${category.label} category`}
-          />
+    <div className="container mx-auto px-4">
+      {/* Heading */}
+      <div className="text-left mt-5 mb-8 pl-4">
+        <h2 className="text-4xl font-bold flex space-x-1">
+          {Array.from("Shopping By Categories").map((letter, index) => (
+            <span
+              key={index}
+              className="inline-block animate-color-change"
+              style={{
+                animationDelay: `${index * 0.2}s`,
+                marginRight: letter === " " ? "10px" : "0",
+              }}
+            >
+              {letter}
+            </span>
+          ))}
+        </h2>
+      </div>
 
-          {/* Category Label */}
-          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-center text-white text-lg font-semibold uppercase tracking-wide bg-black bg-opacity-70 px-3 py-1 rounded transition-opacity duration-300 group-hover:bg-opacity-100">
-            {category.label}
-          </p>
-        </div>
-      ))}
-    </section>
+      {/* Cards */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.map((category, index) => (
+          <div
+            key={index}
+            className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md"
+            onClick={() => navigate(category.path)}
+            style={{ aspectRatio: '3 / 2' }}
+          >
+            {/* Background Image */}
+            <img
+              className="h-full w-full object-cover brightness-50 transition-all duration-500 group-hover:brightness-100 group-hover:scale-105"
+              src={category.image}
+              alt={`${category.label} category`}
+            />
+
+            {/* Category Label */}
+            <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-center text-white text-lg font-semibold uppercase tracking-wide bg-black bg-opacity-70 px-3 py-1 rounded transition-opacity duration-300 group-hover:bg-opacity-100">
+              {category.label}
+            </p>
+          </div>
+        ))}
+      </section>
+    </div>
   );
 };
 

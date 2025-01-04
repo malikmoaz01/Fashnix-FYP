@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import Logo from '../../assets/Logo.png';
-import Navbar from './Navbar';
 
 const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <div>
-            {/* Header Section */}
-            <header className="mx-auto w-full flex h-16 max-w-[1200px] items-center justify-between px-5">
+            {/* Sticky Header Section */}
+            <header className="w-full flex h-16 max-w-[1200px] items-center justify-between px-5 bg-white sticky top-0 z-50 shadow-md">
                 <a href="#">
                     <img
                         className="cursor-pointer h-[55px] w-auto ml-24"
@@ -107,9 +106,6 @@ const Header = () => {
                     </a>
                 </div>
             </header>
-
-            {/* Navbar Section */}
-            {/* <Navbar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} /> */}
         </div>
     );
 };

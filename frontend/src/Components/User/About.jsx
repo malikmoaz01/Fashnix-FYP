@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AboutPic from '../../assets/About.jpg';
 import TeamLeader from '../../assets/TeamLeader.jpg';  // Corrected image import
-
+import Footer from './Footer' 
 const About = () => {
+  const [clients, setClients] = useState(0);
+  const [projects, setProjects] = useState(0);
+  const [delivery, setDelivery] = useState(0);
+  const [experience, setExperience] = useState(0);
+
+  useEffect(() => {
+    animateNumber(setClients, 1370);
+    animateNumber(setProjects, 5490);
+    animateNumber(setDelivery, 100);
+    animateNumber(setExperience, 12);
+  }, []);
+
+  const animateNumber = (setter, target) => {
+    let count = 0;
+    const interval = setInterval(() => {
+      count += Math.ceil(target / 100);
+      if (count >= target) {
+        count = target;
+        clearInterval(interval);
+      }
+      setter(count);
+    }, 30);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header Section */}
@@ -26,80 +50,75 @@ const About = () => {
       </div>
 
       {/* Team Leader Section */}
-      <div className="flex items-center justify-start my-16">
-  <div className="flex items-center gap-8">
-    {/* Team Leader Image */}
-    <div>
-      <img
-        src={TeamLeader}
-        alt="Team Leader"
-        className="w-40 h-40 rounded-lg shadow-lg object-cover"
-      />
-    </div>
-    {/* Team Leader Text */}
-    <div>
-      <h3 className="text-2xl font-semibold text-gray-800">Malik Moaz</h3>
-      <p className="text-gray-600">Full Stack Developer</p>
-      <p className="text-gray-500 mt-4">
-        Malik Moaz is the visionary behind Ecom. He leads the company with a passion for fashion, ensuring that our products meet the highest standards and customer satisfaction is always at the forefront.
-      </p>
-    </div>
-  </div>
-</div>
-
-      {/* Meet Our Team Section */}
-      <div className="text-center mb-16">
-        <h2 className="text-3xl font-extrabold text-gray-800 mb-8">Meet Our Team</h2>
-        <div className="grid md:grid-cols-3 gap-12">
-          {/* Team Member 1 */}
-          <div className="bg-white p-6 rounded-lg border-4 border-blue-700 shadow-lg">
+      <div className="bg-blue-50 p-8 rounded-lg shadow-lg border-l-4 border-blue-800 my-16">
+        <div className="flex items-center gap-10">
+          {/* Team Leader Image */}
+          <div>
             <img
               src={TeamLeader}
-              alt="Team Member 1"
-              className="w-32 h-32 rounded-full mx-auto mb-4"
+              alt="Team Leader"
+              className="w-48 h-48 rounded-lg shadow-lg object-cover"
             />
-            <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
-            <p className="text-gray-600">Full Stack Developer</p>
-            <p className="text-gray-500 mt-2">
-              Malik Moaz works relentlessly to ensure that the platform's technology and user experience are top-notch.
-            </p>
           </div>
-
-          {/* Team Member 2 */}
-          <div className="bg-white p-6 rounded-lg border-4 border-blue-700 shadow-lg">
-            <img
-              src={TeamLeader}
-              alt="Team Member 2"
-              className="w-32 h-32 rounded-full mx-auto mb-4"
-            />
-            <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
-            <p className="text-gray-600">Full Stack Developer</p>
-            <p className="text-gray-500 mt-2">
-              Malik Moaz brings a wealth of technical expertise to our development team, working towards a seamless online shopping experience.
-            </p>
-          </div>
-
-          {/* Team Member 3 */}
-          <div className="bg-white p-6 rounded-lg border-4 border-blue-700 shadow-lg">
-            <img
-              src={TeamLeader}
-              alt="Team Member 3"
-              className="w-32 h-32 rounded-full mx-auto mb-4"
-            />
-            <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
-            <p className="text-gray-600">Full Stack Developer</p>
-            <p className="text-gray-500 mt-2">
-              Malik Moaz ensures our systems are scalable and efficient, always focusing on customer satisfaction and product quality.
+          {/* Team Leader Text */}
+          <div>
+            <h3 className="text-3xl font-bold text-gray-800">Malik Moaz || Team Lead</h3>
+            <p className="text-xl text-gray-600 mb-4">Full Stack Developer</p>
+            <p className="text-gray-500">
+              Malik Moaz is the visionary behind Ecom. He leads the company with a passion for fashion, ensuring that our products meet the highest standards and customer satisfaction is always at the forefront.
             </p>
           </div>
         </div>
       </div>
 
+      {/* Meet Our Team Section */}
+      <div className="text-center mb-16">
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-8">Meet Our Team</h2>
+        <div className="grid md:grid-cols-3 gap-12">
+          {/* Team Members */}
+          {[1, 2, 3].map((_, index) => (
+            <div key={index} className="bg-white p-6 border-4 shadow-lg">
+              <img
+                src={TeamLeader}
+                alt={`Team Member ${index + 1}`}
+                className="w-32 h-32 rounded-full mx-auto mb-4"
+              />
+              <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
+              <p className="text-gray-600">Full Stack Developer</p>
+              <p className="text-gray-500 mt-2">
+                Malik Moaz works relentlessly to ensure that the platform's technology and user experience are top-notch.
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Metrics Section */}
-      <div className="bg-gray-50 py-12">
-        {/* Add metrics content */}
+      <div className="py-12 bg-blue-50">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-blue-700">Our Achievements</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{experience}</h3>
+            <p className="text-lg font-medium text-gray-700">Years of Experience</p>
+          </div>
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{clients}+</h3>
+            <p className="text-lg font-medium text-gray-700">Happy Customers</p>
+          </div>
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{projects}+</h3>
+            <p className="text-lg font-medium text-gray-700">Products Delivered</p>
+          </div>
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{delivery}+</h3>
+            <p className="text-lg font-medium text-gray-700">On-time Deliveries</p>
+          </div>
+        </div>
       </div>
     </div>
+    
   );
 };
 

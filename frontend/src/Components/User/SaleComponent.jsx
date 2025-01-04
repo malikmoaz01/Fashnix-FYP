@@ -1,28 +1,124 @@
 import React, { useState, useEffect } from "react";
 import womenDressImg from "../../assets/Sneakers.jpg"; // Your image
+import CasioWatch from '../../assets/Sales/Casio-Watch.jpg'
+import CoupleSuit from '../../assets/Sales/Couple-Suit.jpg'
+import GoldenWomenCasual from '../../assets/Sales/Golden-Shirt.png'
+import RolexWatch from '../../assets/Sales/Rolex-Watch.jpg'
+import ShalwarQameez from '../../assets/Sales/Shalwar-Qameez.jpg'
+import PinkSunglasses from '../../assets/Sales/Sunglasses.jpg'
+import WomenKurti from '../../assets/Sales/Women-Kurti.jpg'
+import WomenMakeupBrushSet from '../../assets/Sales/Women-Makeup-Brush-Set.jpeg'
+
 
 const SaleComponent = () => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
+    hours: 21,
+    minutes: 23,
+    seconds: 12,
   });
 
-  const products = new Array(9).fill({
-    id: 1,
-    image: womenDressImg,
-    name: "Sneakers",
-    price: 5000,
-    originalPrice: 7500,
-    discount: "33% OFF",
-    rating: 4.8,
-    reviews: 42,
-    material: "Synthetic",
-    availableSizes: ["M", "L", "XL"],
-    stock: 7,
-    color: "White",
-  });
+  const products = [
+    {
+      id: 1,
+      image: womenDressImg,
+      name: "Sneakers",
+      price: 5000,
+      originalPrice: 7500,
+      discount: "33% OFF",
+      material: "Synthetic",
+      rating: 4.8,
+      reviews: 42,
+    },
+    {
+      id: 2,
+      image: CasioWatch,
+      name: "Casio Watch",
+      price: 7000,
+      originalPrice: 9000,
+      discount: "22% OFF",
+      material: "Stainless Steel",
+      rating: 4.6,
+      reviews: 30,
+    },
+    {
+      id: 3,
+      image: CoupleSuit,
+      name: "Couple Suit",
+      price: 15000,
+      originalPrice: 20000,
+      discount: "25% OFF",
+      material: "Cotton Blend",
+      rating: 4.7,
+      reviews: 25,
+    },
+    {
+      id: 4,
+      image: GoldenWomenCasual,
+      name: "Golden Shirt",
+      price: 3000,
+      originalPrice: 4500,
+      discount: "33% OFF",
+      material: "Silk",
+      rating: 4.5,
+      reviews: 18,
+    },
+    {
+      id: 5,
+      image: RolexWatch,
+      name: "Rolex Watch",
+      price: 25000,
+      originalPrice: 30000,
+      discount: "16% OFF",
+      material: "Gold-Plated",
+      rating: 4.9,
+      reviews: 50,
+    },
+    {
+      id: 6,
+      image: ShalwarQameez,
+      name: "Shalwar Qameez",
+      price: 4000,
+      originalPrice: 5000,
+      discount: "20% OFF",
+      material: "Lawn",
+      rating: 4.4,
+      reviews: 20,
+    },
+    {
+      id: 7,
+      image: PinkSunglasses,
+      name: "Pink Sunglasses",
+      price: 1500,
+      originalPrice: 2500,
+      discount: "40% OFF",
+      material: "Polycarbonate",
+      rating: 4.6,
+      reviews: 28,
+    },
+    {
+      id: 8,
+      image: WomenKurti,
+      name: "Women Kurti",
+      price: 2000,
+      originalPrice: 3000,
+      discount: "33% OFF",
+      material: "Cotton",
+      rating: 4.5,
+      reviews: 35,
+    },
+    {
+      id: 9,
+      image: WomenMakeupBrushSet,
+      name: "Makeup Brush Set",
+      price: 1800,
+      originalPrice: 2500,
+      discount: "28% OFF",
+      material: "Synthetic Fibers",
+      rating: 4.7,
+      reviews: 40,
+    },
+  ];
 
   // Countdown Timer Logic
   useEffect(() => {
@@ -57,7 +153,7 @@ const SaleComponent = () => {
       {/* Flash Sale Title and Timer */}
       <div className="flex justify-between items-center mb-4">
         {/* Flash Sale Text */}
-        <div className="text-5xl font-semibold text-blue-700 animate-blink">
+        <div className="text-4xl font-semibold text-blue-700 animate-blink">
           🔥 Flash Sale
         </div>
 

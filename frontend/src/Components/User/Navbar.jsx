@@ -1,12 +1,12 @@
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import CategoriesDropdown from './CategoriesDropdown';
-import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     const [categoriesOpen, setCategoriesOpen] = useState(false);
 
     return (
-        <nav className="relative bg-blue-900">
+        <nav className="relative bg-blue-900 sticky top-16 z-40">
             <div className="mx-auto hidden h-12 w-full max-w-[1200px] items-center md:flex">
                 <button
                     onClick={() => setCategoriesOpen(!categoriesOpen)}
@@ -39,10 +39,7 @@ const Navbar = () => {
                         Home
                     </Link>
                     <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/about-us">
-                        About Us
-                    </Link>
-                    <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/catalogue">
-                        Catalogue
+                        About
                     </Link>
                     <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/contact-us">
                         Contact Us
