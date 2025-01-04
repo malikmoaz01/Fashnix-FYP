@@ -101,6 +101,10 @@ import Bags from './Components/User/Accessories/Bags';
 import Shoes from './Components/User/Accessories/Shoes';
 import Watches from './Components/User/Accessories/Watches';
 import Jewelry from './Components/User/Accessories/Jewelry';
+import BelowHero from './Components/User/BelowHero';
+import Recommended from './Components/User/Recomended';
+import SaleComponent from './Components/User/SaleComponent';
+import About from './Components/User/About';
 
 const App = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -115,7 +119,9 @@ const App = () => {
                 {/* Header and Navbar */}
                 <Header />
                 <Navbar onToggleDropdown={() => setDropdownOpen(!dropdownOpen)} />
-
+                    <SaleComponent/>
+                <BelowHero/>
+                <Recommended/>
                 {/* Dropdown for categories */}
                 {dropdownOpen && <CategoriesDropdown onNavigate={handleNavigate} />}
 
@@ -123,6 +129,7 @@ const App = () => {
                 <main>
                     <Routes>
                         {/* Signup and Login */}
+                        <Route path="/about-us" element={<About />}/>
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/login" element={<Login />} />
 

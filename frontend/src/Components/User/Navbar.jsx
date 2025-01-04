@@ -32,7 +32,7 @@ const Navbar = () => {
                 </button>
 
                 <div className="mx-7 flex gap-8">
-                    <Link className="font-light text-white hover:text-pink-300 hover:underline" to="#">
+                    <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/newArrivals">
                         New Arrivals
                     </Link>
                     <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/">

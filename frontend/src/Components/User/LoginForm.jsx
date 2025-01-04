@@ -8,23 +8,22 @@ const LoginForm = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add login logic here
     alert("Login successful!");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4">
-      <div className="relative w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4 sm:p-6 lg:p-10">
+      <div className="relative w-full max-w-sm sm:max-w-md bg-white rounded-lg shadow-lg p-6 sm:p-8 lg:p-10">
         {/* Blinking effect container */}
         <div className="absolute -inset-1 rounded-lg animate-blink border-2 border-blue-700 pointer-events-none"></div>
-        <h1 className="text-2xl font-bold text-gray-900 text-center mb-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-4">
           Login
         </h1>
         <form className="space-y-4" onSubmit={handleLogin}>
           <div>
             <label
               htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900"
+              className="block mb-2 text-sm sm:text-base font-medium text-gray-900"
             >
               Your Email
             </label>
@@ -34,14 +33,14 @@ const LoginForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm sm:text-base rounded-lg focus:ring-blue-700 focus:border-blue-700 block w-full p-2 sm:p-2.5"
               required
             />
           </div>
           <div>
             <label
               htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900"
+              className="block mb-2 text-sm sm:text-base font-medium text-gray-900"
             >
               Password
             </label>
@@ -51,19 +50,19 @@ const LoginForm = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-700 focus:border-blue-700 block w-full p-2.5"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm sm:text-base rounded-lg focus:ring-blue-700 focus:border-blue-700 block w-full p-2 sm:p-2.5"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full text-white-900 bg-white border border-blue-700 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            className="w-full text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 sm:px-5 sm:py-2.5 text-center"
           >
             Login
           </button>
           <button
             type="button"
-            className="w-full text-gray-900 bg-white border border-blue-900 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center"
+            className="w-full text-gray-900 bg-white border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 sm:px-5 sm:py-2.5 text-center flex items-center justify-center"
           >
             <svg
               className="mr-2 -ml-1 w-4 h-4"
@@ -87,7 +86,7 @@ const LoginForm = () => {
             <a
               href="#"
               onClick={() => navigate("/signup")}
-              className="font-medium text-blue-900 hover:underline"
+              className="font-medium text-blue-700 hover:underline"
             >
               Sign up here
             </a>

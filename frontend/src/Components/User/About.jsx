@@ -1,0 +1,106 @@
+import React from 'react';
+import AboutPic from '../../assets/About.jpg';
+import TeamLeader from '../../assets/TeamLeader.jpg';  // Corrected image import
+
+const About = () => {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Header Section */}
+      <div className="grid md:grid-cols-2 gap-8 items-center">
+        {/* About Image Section */}
+        <div className="flex justify-center mb-8 md:mb-0">
+          <img
+            src={AboutPic}
+            alt="About Image"
+            className="w-48 h-48 object-cover rounded-full shadow-lg"
+          />
+        </div>
+
+        {/* Text Section */}
+        <div>
+          <h2 className="text-3xl font-extrabold text-gray-800 mb-4">Our Story</h2>
+          <p className="text-lg text-gray-600">
+            Welcome to <strong>Ecom</strong>, an e-commerce clothing & accessories brand born from a simple idea: to provide stylish, comfortable, and high-quality clothing and accessories for everyone. Our journey started with a passion for fashion and a commitment to delivering the latest trends to your doorstep. We aim to offer a diverse range of products that cater to all tastes and preferences. Our mission is simple: to make fashion accessible and enjoyable for all.
+          </p>
+        </div>
+      </div>
+
+      {/* Team Leader Section */}
+      <div className="flex items-center justify-start my-16">
+  <div className="flex items-center gap-8">
+    {/* Team Leader Image */}
+    <div>
+      <img
+        src={TeamLeader}
+        alt="Team Leader"
+        className="w-40 h-40 rounded-lg shadow-lg object-cover"
+      />
+    </div>
+    {/* Team Leader Text */}
+    <div>
+      <h3 className="text-2xl font-semibold text-gray-800">Malik Moaz</h3>
+      <p className="text-gray-600">Full Stack Developer</p>
+      <p className="text-gray-500 mt-4">
+        Malik Moaz is the visionary behind Ecom. He leads the company with a passion for fashion, ensuring that our products meet the highest standards and customer satisfaction is always at the forefront.
+      </p>
+    </div>
+  </div>
+</div>
+
+      {/* Meet Our Team Section */}
+      <div className="text-center mb-16">
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-8">Meet Our Team</h2>
+        <div className="grid md:grid-cols-3 gap-12">
+          {/* Team Member 1 */}
+          <div className="bg-white p-6 rounded-lg border-4 border-blue-700 shadow-lg">
+            <img
+              src={TeamLeader}
+              alt="Team Member 1"
+              className="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
+            <p className="text-gray-600">Full Stack Developer</p>
+            <p className="text-gray-500 mt-2">
+              Malik Moaz works relentlessly to ensure that the platform's technology and user experience are top-notch.
+            </p>
+          </div>
+
+          {/* Team Member 2 */}
+          <div className="bg-white p-6 rounded-lg border-4 border-blue-700 shadow-lg">
+            <img
+              src={TeamLeader}
+              alt="Team Member 2"
+              className="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
+            <p className="text-gray-600">Full Stack Developer</p>
+            <p className="text-gray-500 mt-2">
+              Malik Moaz brings a wealth of technical expertise to our development team, working towards a seamless online shopping experience.
+            </p>
+          </div>
+
+          {/* Team Member 3 */}
+          <div className="bg-white p-6 rounded-lg border-4 border-blue-700 shadow-lg">
+            <img
+              src={TeamLeader}
+              alt="Team Member 3"
+              className="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h4 className="text-xl font-semibold text-gray-800">Malik Moaz</h4>
+            <p className="text-gray-600">Full Stack Developer</p>
+            <p className="text-gray-500 mt-2">
+              Malik Moaz ensures our systems are scalable and efficient, always focusing on customer satisfaction and product quality.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Metrics Section */}
+      <div className="bg-gray-50 py-12">
+        {/* Add metrics content */}
+      </div>
+    </div>
+  );
+};
+
+export default About;
