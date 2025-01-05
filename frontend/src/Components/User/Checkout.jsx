@@ -176,6 +176,10 @@ const Checkout = () => {
   );
 };
 
+
+
+
+
 // Address Form Component
 const AddressForm = () => (
   <div>
@@ -215,6 +219,10 @@ const AddressForm = () => (
   </div>
 );
 
+
+
+
+
 // Delivery Method Component
 const DeliveryMethod = () => (
   <div>
@@ -243,6 +251,11 @@ const DeliveryMethod = () => (
     </fieldset>
   </div>
 );
+
+
+
+
+
 
 // Payment Method Component
 const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => (
@@ -307,6 +320,10 @@ const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => (
   </div>
 );
 
+
+
+
+
 // Order Review Component
 const OrderReview = ({
   cartItems,
@@ -356,7 +373,7 @@ const OrderReview = ({
       />
       <button
         onClick={handleDiscountApply}
-        className="bg-green-500 text-white px-4 py-2 rounded-md"
+        className="bg-red-500 text-white px-4 py-2 rounded-md"
       >
         Apply
       </button>
@@ -365,7 +382,7 @@ const OrderReview = ({
     <div className="mt-4 border-t pt-4 text-right">
       <p>Subtotal: Rs {subtotal.toLocaleString()}</p>
       {discountAmount > 0 && (
-        <p className="text-green-500">
+        <p className="text-red-500">
           Discount Applied: Rs {discountAmount.toLocaleString()}
         </p>
       )}
@@ -373,6 +390,11 @@ const OrderReview = ({
     </div>
   </div>
 );
+
+
+
+
+
 
 // Confirmation Component
 const Confirmation = () => (

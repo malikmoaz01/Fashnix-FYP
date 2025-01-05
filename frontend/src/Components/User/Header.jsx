@@ -80,12 +80,11 @@ const Header = () => {
                     </a>
 
                     {/* Account Icon (if needed) */}
-                    <a href="#" className="relative flex cursor-pointer flex-col items-center justify-center">
+                    <a href="/account" className="relative flex cursor-pointer flex-col items-center justify-center">
                         <span className="absolute bottom-[33px] right-1 flex h-2 w-2">
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
                         </span>
-
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"

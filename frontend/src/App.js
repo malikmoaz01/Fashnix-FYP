@@ -46,6 +46,9 @@ import Home from './Components/User/Home';
 import Cart from './Components/User/Cart'
 import Checkout from './Components/User/Checkout'
 import BelowFooter from './Components/User/BelowFooter';
+import UserProfile from './Components/User/UserProfile';
+import OrderHistory from './Components/User/OrderHistory';
+import PaymentMethod from './Components/User/PaymentMethods';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -122,6 +125,9 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path='/cart' element={<Cart />}/>
                 <Route path='/checkout' element={<Checkout/>}/>
+                <Route path='/account'  element={<UserProfile/>}/>
+                <Route path='/order-history' element={<OrderHistory/>}/>
+                <Route path='/payment-methods' element={<PaymentMethod/>}/>
                 {/* Menswear */}
                 <Route path="/menswear/shirts" element={<Shirts />} />
                 <Route path="/menswear/tshirts" element={<TShirts />} />
