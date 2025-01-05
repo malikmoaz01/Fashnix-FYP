@@ -43,7 +43,7 @@ const Navbar = () => {
                     </Link>
                     <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/contact">
                         Contact Us
-                    </Link>
+                    </Link>    
                 </div>
 
                 <div className="ml-auto flex gap-4 px-5">
