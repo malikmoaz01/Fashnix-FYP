@@ -150,9 +150,7 @@ const SaleComponent = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      {/* Flash Sale Title and Timer */}
       <div className="flex justify-between items-center mb-4">
-        {/* Flash Sale Text */}
         <div className="text-4xl font-semibold text-blue-700 animate-blink">
           🔥 Flash Sale
         </div>
@@ -215,9 +213,11 @@ const SaleComponent = () => {
 
               {/* Add to Cart Button */}
               <div className="flex justify-center my-4">
-                <button className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
-                  View Product
-                </button>
+                <a href="/product-overview">
+                  <button className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+                    View Product
+                  </button>
+                </a>
               </div>
             </div>
           ))}
@@ -226,9 +226,11 @@ const SaleComponent = () => {
 
       {/* View All Flash Sale Products Button */}
       <div className="flex justify-center my-6">
+        <a href="/sale-products" >
         <button className="bg-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-600 transition">
           View All Flash Sale Products
         </button>
+        </a>
       </div>
     </div>
   );

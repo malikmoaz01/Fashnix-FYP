@@ -232,10 +232,11 @@ const Recommended = () => {
                 ))}
                 <p className="text-sm text-gray-500">({product.reviews})</p>
               </div>
-
+              <a href="/product-overview">
               <button className="mt-4 w-full bg-blue-900 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 rounded-full">
                 Quick View
               </button>
+              </a>
             </div>
           </div>
         ))}

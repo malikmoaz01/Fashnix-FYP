@@ -50,6 +50,9 @@ import UserProfile from './Components/User/UserProfile';
 import OrderHistory from './Components/User/OrderHistory';
 import PaymentMethod from './Components/User/PaymentMethods';
 import ProductOverview from './Components/User/ProductOverview';
+import NewArrival from './Components/User/NewArrival';
+import SaleProducts from './Components/User/SaleProducts';
+import ContactForm from './Components/User/Contact';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -130,6 +133,10 @@ function App() {
                 <Route path='/order-history' element={<OrderHistory/>}/>
                 <Route path='/payment-methods' element={<PaymentMethod/>}/>
                 <Route path='/product-overview' element={<ProductOverview/>}/>
+                <Route path='/newArrivals' element={<NewArrival/>}/>
+                <Route path='/sale-products' element={<SaleProducts/>}/>
+                <Route path='/contact' element={<ContactForm/>}/>
+
                 {/* Menswear */}
                 <Route path="/menswear/shirts" element={<Shirts />} />
                 <Route path="/menswear/tshirts" element={<TShirts />} />
