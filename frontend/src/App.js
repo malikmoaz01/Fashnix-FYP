@@ -43,7 +43,9 @@ import Jewelry from './Components/User/Accessories/Jewelry';
 import About from './Components/User/About';
 import Footer from './Components/User/Footer';
 import Home from './Components/User/Home';
-
+import Cart from './Components/User/Cart'
+import Checkout from './Components/User/Checkout'
+import BelowFooter from './Components/User/BelowFooter';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -118,7 +120,8 @@ function App() {
                 <Route path="/about-us" element={<About />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} />
-
+                <Route path='/cart' element={<Cart />}/>
+                <Route path='/checkout' element={<Checkout/>}/>
                 {/* Menswear */}
                 <Route path="/menswear/shirts" element={<Shirts />} />
                 <Route path="/menswear/tshirts" element={<TShirts />} />
@@ -144,6 +147,7 @@ function App() {
                 <Route path="/accessories/jewelry" element={<Jewelry />} />
               </Routes>
               <Footer />
+              <BelowFooter/>
             </>
           }
         />

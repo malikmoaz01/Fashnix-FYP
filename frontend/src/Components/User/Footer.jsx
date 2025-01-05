@@ -31,9 +31,9 @@ const Footer = () => {
 		{ label: "Men's T-Shirts", path: '/menswear/tshirts' },
 		{ label: "Women's Dresses", path: '/womenswear/dresses' },
 		{ label: "Kids Wear", path: '/kidswear/dresses' },
-		{ label: "Men's Shoes", path: '/menswear/shoes' },
-		{ label: "Women's Shoes", path: '/womenswear/shoes' },
-		{ label: "Accessories", path: '/accessories' },
+		{ label: "Men's Jackets", path: '/menswear/jackets' },
+		{ label: "Women's Tops", path: '/womenswear/tops' },
+		{ label: "Accessories", path: '/accessories/bags' },
 	];
 
 	return (

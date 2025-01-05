@@ -36,7 +36,7 @@ const About = () => {
           <img
             src={AboutPic}
             alt="About Image"
-            className="w-48 h-48 object-cover rounded-full shadow-lg"
+            className="w-82 h-68 object-cover shadow-lg"
           />
         </div>
 
@@ -46,6 +46,32 @@ const About = () => {
           <p className="text-lg text-gray-600">
             Welcome to <strong>Ecom</strong>, an e-commerce clothing & accessories brand born from a simple idea: to provide stylish, comfortable, and high-quality clothing and accessories for everyone. Our journey started with a passion for fashion and a commitment to delivering the latest trends to your doorstep. We aim to offer a diverse range of products that cater to all tastes and preferences. Our mission is simple: to make fashion accessible and enjoyable for all.
           </p>
+        </div>
+      </div>
+      
+
+      {/* Our Achievement Page */}
+      <div className="py-12 bg-pink-100">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-blue-700">Our Achievements</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{experience}</h3>
+            <p className="text-lg font-medium text-gray-700">Years of Experience</p>
+          </div>
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{clients}+</h3>
+            <p className="text-lg font-medium text-gray-700">Happy Customers</p>
+          </div>
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{projects}+</h3>
+            <p className="text-lg font-medium text-gray-700">Products Delivered</p>
+          </div>
+          <div className="p-4">
+            <h3 className="text-4xl font-extrabold text-blue-700">{delivery}+</h3>
+            <p className="text-lg font-medium text-gray-700">On-time Deliveries</p>
+          </div>
         </div>
       </div>
 
@@ -94,29 +120,7 @@ const About = () => {
       </div>
 
       {/* Metrics Section */}
-      <div className="py-12 bg-blue-50">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-blue-700">Our Achievements</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="p-4">
-            <h3 className="text-4xl font-extrabold text-blue-700">{experience}</h3>
-            <p className="text-lg font-medium text-gray-700">Years of Experience</p>
-          </div>
-          <div className="p-4">
-            <h3 className="text-4xl font-extrabold text-blue-700">{clients}+</h3>
-            <p className="text-lg font-medium text-gray-700">Happy Customers</p>
-          </div>
-          <div className="p-4">
-            <h3 className="text-4xl font-extrabold text-blue-700">{projects}+</h3>
-            <p className="text-lg font-medium text-gray-700">Products Delivered</p>
-          </div>
-          <div className="p-4">
-            <h3 className="text-4xl font-extrabold text-blue-700">{delivery}+</h3>
-            <p className="text-lg font-medium text-gray-700">On-time Deliveries</p>
-          </div>
-        </div>
-      </div>
+      
     </div>
     
   );
