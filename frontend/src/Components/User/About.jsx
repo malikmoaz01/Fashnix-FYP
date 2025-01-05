@@ -51,7 +51,7 @@ const About = () => {
       
 
       {/* Our Achievement Page */}
-      <div className="py-12 bg-pink-100">
+      <div className="py-12  rounded-md">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-blue-700">Our Achievements</h2>
         </div>

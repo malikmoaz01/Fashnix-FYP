@@ -2,7 +2,7 @@ import React from 'react';
 
 const BelowFooter = () => {
     return (
-        <section className="h-11 bg-pink-600">
+        <section className="h-11 bg-pink-500">
             <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 pt-2">
                 <p>&copy; Malik Moaz, 2025</p>
                 <div className="flex items-center space-x-3">

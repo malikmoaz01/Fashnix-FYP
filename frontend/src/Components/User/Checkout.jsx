@@ -11,76 +11,90 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [cartItems] = useState([
     {
-        id: 1,
-        image: womenDressImg,
-        name: "Sneakers",
-        price: 5000,
-        originalPrice: 7500,
-        discount: "33% OFF",
-        material: "Synthetic",
-        size: 44,
-        quantity: 1,
-      },
-      {
-        id: 2,
-        image: CasioWatch,
-        name: "Casio Watch",
-        price: 7000,
-        originalPrice: 9000,
-        discount: "22% OFF",
-        material: "Stainless Steel",
-        size: "Small",
-        quantity: 1,
-      },
-      {
-        id: 3,
-        image: CoupleSuit,
-        name: "Couple Suit",
-        price: 15000,
-        originalPrice: 20000,
-        discount: "25% OFF",
-        material: "Cotton Blend",
-        size: "XL",
-        quantity: 1,
-      },
-      {
-        id: 4,
-        image: GoldenWomenCasual,
-        name: "Golden Shirt",
-        price: 3000,
-        originalPrice: 4500,
-        discount: "33% OFF",
-        material: "Silk",
-        size: "XL",
-        quantity: 1,
-      },
-      {
-        id: 5,
-        image: RolexWatch,
-        name: "Rolex Watch",
-        price: 25000,
-        originalPrice: 30000,
-        discount: "16% OFF",
-        material: "Gold-Plated",
-        size: "XL",
-        quantity: 1,
-      },
-      {
-        id: 6,
-        image: ShalwarQameez,
-        name: "Shalwar Qameez",
-        price: 4000,
-        originalPrice: 5000,
-        discount: "20% OFF",
-        material: "Lawn",
-        quantity: 1,
-      },
+      id: 1,
+      image: womenDressImg,
+      name: "Sneakers",
+      price: 5000,
+      originalPrice: 7500,
+      discount: "33% OFF",
+      material: "Synthetic",
+      size: 44,
+      quantity: 1,
+    },
+    {
+      id: 2,
+      image: CasioWatch,
+      name: "Casio Watch",
+      price: 7000,
+      originalPrice: 9000,
+      discount: "22% OFF",
+      material: "Stainless Steel",
+      size: "Small",
+      quantity: 1,
+    },
+    {
+      id: 3,
+      image: CoupleSuit,
+      name: "Couple Suit",
+      price: 15000,
+      originalPrice: 20000,
+      discount: "25% OFF",
+      material: "Cotton Blend",
+      size: "XL",
+      quantity: 1,
+    },
+    {
+      id: 4,
+      image: GoldenWomenCasual,
+      name: "Golden Shirt",
+      price: 3000,
+      originalPrice: 4500,
+      discount: "33% OFF",
+      material: "Silk",
+      size: "XL",
+      quantity: 1,
+    },
+    {
+      id: 5,
+      image: RolexWatch,
+      name: "Rolex Watch",
+      price: 25000,
+      originalPrice: 30000,
+      discount: "16% OFF",
+      material: "Gold-Plated",
+      size: "XL",
+      quantity: 1,
+    },
+    {
+      id: 6,
+      image: ShalwarQameez,
+      name: "Shalwar Qameez",
+      price: 4000,
+      originalPrice: 5000,
+      discount: "20% OFF",
+      material: "Lawn",
+      quantity: 1,
+    },
   ]);
+
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountApplied, setDiscountApplied] = useState(false);
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const handleDiscountApply = () => {
+    if (discountCode === "Ecom") {
+      setDiscountApplied(true);
+    } else {
+      alert("Invalid discount code.");
+    }
+  };
+
+  const discountAmount = discountApplied ? subtotal * 0.1 : 0;
+  const totalAfterDiscount = subtotal - discountAmount;
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -91,20 +105,24 @@ const Checkout = () => {
 
       {/* Step Navigation */}
       <div className="flex justify-between border-b-2 pb-2 mb-4">
-        {["Address", "Delivery Method", "Payment Method", "Order Review", "Confirmation"].map(
-          (label, index) => (
-            <button
-              key={index}
-              onClick={() => setStep(index + 1)}
-              disabled={step > 4} // Disable when on Confirmation page
-              className={`px-4 py-2 ${
-                step === index + 1 ? "font-bold text-blue-600" : "text-gray-500"
-              }`}
-            >
-              {label}
-            </button>
-          )
-        )}
+        {[
+          "Address",
+          "Delivery Method",
+          "Payment Method",
+          "Order Review",
+          "Confirmation",
+        ].map((label, index) => (
+          <button
+            key={index}
+            onClick={() => setStep(index + 1)}
+            disabled={step > 4} // Disable when on Confirmation page
+            className={`px-4 py-2 ${
+              step === index + 1 ? "font-bold text-blue-600" : "text-gray-500"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Step Content */}
@@ -117,7 +135,16 @@ const Checkout = () => {
             setPaymentMethod={setPaymentMethod}
           />
         )}
-        {step === 4 && <OrderReview cartItems={cartItems} subtotal={subtotal} />}
+        {step === 4 && (
+          <OrderReview
+            cartItems={cartItems}
+            subtotal={subtotal}
+            discountAmount={discountAmount}
+            totalAfterDiscount={totalAfterDiscount}
+            setDiscountCode={setDiscountCode}
+            handleDiscountApply={handleDiscountApply}
+          />
+        )}
         {step === 5 && <Confirmation />}
       </div>
 
@@ -126,7 +153,7 @@ const Checkout = () => {
         {step > 1 && step < 5 && (
           <button
             onClick={prevStep}
-            className="bg-pink-500 px-4 py-2 rounded-md hover:bg-gray-600"
+            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
             Back
           </button>
@@ -135,11 +162,11 @@ const Checkout = () => {
           <button
             onClick={nextStep}
             disabled={step === 3 && paymentMethod === ""}
-            className={`${
+            className={`px-4 py-2 rounded-md ${
               step === 3 && paymentMethod === ""
-                ? "bg-blue-900 text-white-600"
+                ? "bg-gray-400 text-gray-700 cursor-not-allowed"
                 : "bg-blue-900 text-white hover:bg-blue-800"
-            } px-4 py-2 rounded-md`}
+            }`}
           >
             {step === 4 ? "Confirm Order" : "Next"}
           </button>
@@ -192,16 +219,28 @@ const AddressForm = () => (
 const DeliveryMethod = () => (
   <div>
     <h2 className="text-xl font-bold mb-4">Delivery Method</h2>
-    <div className="space-y-4">
+    <fieldset>
+      <legend className="sr-only">Choose delivery method</legend>
       <label className="flex items-center space-x-2">
-        <input type="radio" name="delivery" className="w-4 h-4" />
+        <input
+          type="radio"
+          name="delivery"
+          value="standard"
+          className="w-4 h-4"
+          defaultChecked
+        />
         <span>Standard Delivery (Free)</span>
       </label>
       <label className="flex items-center space-x-2">
-        <input type="radio" name="delivery" className="w-4 h-4" />
+        <input
+          type="radio"
+          name="delivery"
+          value="express"
+          className="w-4 h-4"
+        />
         <span>Express Delivery (Rs 500)</span>
       </label>
-    </div>
+    </fieldset>
   </div>
 );
 
@@ -209,7 +248,8 @@ const DeliveryMethod = () => (
 const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => (
   <div>
     <h2 className="text-xl font-bold mb-4">Payment Method</h2>
-    <div className="space-y-4">
+    <fieldset>
+      <legend className="sr-only">Choose payment method</legend>
       <label className="flex items-center space-x-2">
         <input
           type="radio"
@@ -232,7 +272,7 @@ const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => (
         />
         <span>Cash on Delivery</span>
       </label>
-    </div>
+    </fieldset>
 
     {paymentMethod === "creditCard" && (
       <form className="mt-4 space-y-4">
@@ -268,49 +308,71 @@ const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => (
 );
 
 // Order Review Component
-// Order Review Component
-const OrderReview = ({ cartItems, subtotal }) => (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Order Review</h2>
-      <div className="space-y-4">
-        {cartItems.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between border-b pb-2 mb-2"
-          >
-            {/* Image and Details */}
-            <div className="flex items-center gap-4">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-20 h-20 object-cover rounded-md"
-              />
-              <div>
-                <h3 className="font-bold text-lg">{item.name}</h3>
-                <p className="text-sm text-gray-600">
-                  Material: {item.material || "N/A"}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Size: {item.size || "N/A"}
-                </p>
-                <p className="text-sm text-green-500">{item.discount}</p>
-              </div>
-            </div>
-            {/* Price and Quantity */}
-            <div className="text-right">
-              <p>Rs {item.price.toLocaleString()}</p>
-              <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+const OrderReview = ({
+  cartItems,
+  subtotal,
+  discountAmount,
+  totalAfterDiscount,
+  setDiscountCode,
+  handleDiscountApply,
+}) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Order Review</h2>
+    <div className="space-y-4">
+      {cartItems.map((item) => (
+        <div
+          key={item.id}
+          className="flex items-center justify-between border-b pb-2 mb-2"
+        >
+          <div className="flex items-center gap-4">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-20 h-20 object-cover rounded-md"
+            />
+            <div>
+              <h3 className="font-bold text-lg">{item.name}</h3>
+              <p className="text-sm text-gray-600">
+                Material: {item.material || "N/A"}
+              </p>
+              <p className="text-sm text-gray-600">Size: {item.size || "N/A"}</p>
+              <p className="text-sm text-green-500">{item.discount}</p>
             </div>
           </div>
-        ))}
-      </div>
-      {/* Subtotal */}
-      <div className="mt-4 border-t pt-4 text-right">
-        <strong>Total: Rs {subtotal.toLocaleString()}</strong>
-      </div>
+          <div className="text-right">
+            <p>Rs {item.price.toLocaleString()}</p>
+            <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+          </div>
+        </div>
+      ))}
     </div>
-  );
-  
+
+    <div className="flex justify-between mt-4">
+      <input
+        type="text"
+        placeholder="Enter Discount Code"
+        className="w-1/2 border rounded-md p-2"
+        onChange={(e) => setDiscountCode(e.target.value)}
+      />
+      <button
+        onClick={handleDiscountApply}
+        className="bg-green-500 text-white px-4 py-2 rounded-md"
+      >
+        Apply
+      </button>
+    </div>
+
+    <div className="mt-4 border-t pt-4 text-right">
+      <p>Subtotal: Rs {subtotal.toLocaleString()}</p>
+      {discountAmount > 0 && (
+        <p className="text-green-500">
+          Discount Applied: Rs {discountAmount.toLocaleString()}
+        </p>
+      )}
+      <strong>Total: Rs {totalAfterDiscount.toLocaleString()}</strong>
+    </div>
+  </div>
+);
 
 // Confirmation Component
 const Confirmation = () => (
