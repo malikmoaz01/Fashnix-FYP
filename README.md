@@ -1,5 +1,5 @@
-
-# Final Year Project -  Ecommerce-with-Machine Learning 
+   
+# Final Year Project -  Ecom
 
 ## Project Overview
 This project is an E-commerce application that uses machine learning to provide product recommendations. The goal is to give users a personalized shopping experience.
