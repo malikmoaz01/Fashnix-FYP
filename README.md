@@ -1,5 +1,5 @@
    
-# Final Year Project -  Ecom
+# Final Year Project -  Fashnix
 
 ## Project Overview
 This project is an E-commerce application that uses machine learning to provide product recommendations. The goal is to give users a personalized shopping experience.
@@ -21,8 +21,8 @@ Follow these steps to get the project up and running in your local environment:
 
 1. **Clone the repository**:
     ```
-    git clone https://github.com/malikmoaz01/Final-Year-Project
-    cd Final-Year-Project
+    git clone https://github.com/malikmoaz01/Fashnix-FYP
+    cd Fashnix-FYP
     ```
 
 2. **Install dependencies**:
@@ -32,19 +32,9 @@ Follow these steps to get the project up and running in your local environment:
     npm install
     ```
 
-   - For the backend:
-    ```
-    cd backend
-    pip install -r requirements.txt
-    ```
-
 3. **Run the application**:
    - For the frontend:
     ```
     npm start
     ```
 
-   - For the backend:
-    ```
-    python manage.py runserver
-    ```
