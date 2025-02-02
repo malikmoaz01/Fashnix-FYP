@@ -4,7 +4,9 @@
 # Website is live on below Link
 # https://fashnixx.vercel.app/
 
-# You can use admin dashboard by this https://fashnixx.vercel.app/ using this below credentials
+# You can see admin dashboard by using this this link
+# https://fashnixx.vercel.app/ 
+# By using this below credentials
 # username : admin       <-------->       password: 123
 
 ## Project Overview
