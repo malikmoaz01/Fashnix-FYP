@@ -4,6 +4,9 @@
 # Website is live on below Link
 # https://fashnixx.vercel.app/
 
+# You can use admin dashboard by this https://fashnixx.vercel.app/ using this below credentials
+# username : admin       <-------->       password: 123
+
 ## Project Overview
 This project is an E-commerce application that uses machine learning to provide product recommendations. The goal is to give users a personalized shopping experience.
 
