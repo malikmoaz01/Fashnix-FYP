@@ -5,7 +5,7 @@
 # https://fashnixx.vercel.app/
 
 # You can see admin dashboard by using this this link
-# https://fashnixx.vercel.app/ 
+# https://fashnixx.vercel.app/admin/login
 # By using this below credentials
 # username : admin       <-------->       password: 123
 
