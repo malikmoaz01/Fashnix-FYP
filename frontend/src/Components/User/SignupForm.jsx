@@ -17,7 +17,7 @@ const SignupForm = () => {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    setPasswordError(""); // Reset error on typing
+    setPasswordError("");
   };
 
   const handleConfirmPasswordChange = (e) => {
@@ -38,10 +38,10 @@ const SignupForm = () => {
     alert("Account created successfully!");
   };
 
-  // Inline styles for blinking effect
+  
   const blinkingStyle = {
     animation: "blink 1s infinite",
-    border: "4px solidrgba(255, 106, 250, 0.24)", // Blue 900
+    border: "4px solidrgba(255, 106, 250, 0.24)", 
   };
 
   const styles = `
