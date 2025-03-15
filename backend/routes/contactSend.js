@@ -1,19 +1,13 @@
 import express from "express";
-import resend from "../config/emailConfig.js"; 
+import { sendEmail } from "../config/emailConfig.js";
 
 const router = express.Router();
 
-router.post("/send-email", async (req, res) => {
+router.post("/", async (req, res) => {
   const { firstName, lastName, email, phone, message } = req.body;
 
   try {
-    const response = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: "mlkmoaz01@gmail.com",
-      subject: "New Contact Form Submission",
-      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
-    });
-
+    const response = await sendEmail({ firstName, lastName, email, phone, message });
     console.log("Email sent:", response);
     res.status(200).send("Email sent successfully!");
   } catch (error) {
