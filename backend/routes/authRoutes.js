@@ -1,11 +1,25 @@
 import express from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import multer from "multer";
+import path from "path";
 
 const router = express.Router();
+const SECRET_KEY = "your_secret_key";
 
-router.post("/signup", async (req, res) => {
-  const { name, email, password, profileImage } = req.body;
+// Multer setup for profile image uploads
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
+
+router.post("/signup", upload.single("profileImage"), async (req, res) => {
+  const { name, email, password } = req.body;
+  const profileImage = req.file ? req.file.filename : "";
 
   try {
     const existingUser = await User.findOne({ email });
@@ -17,7 +31,11 @@ router.post("/signup", async (req, res) => {
     const newUser = new User({ name, email, password: hashedPassword, profileImage });
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    const token = jwt.sign({ id: newUser._id, email: newUser.email }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(201).json({ message: "User registered successfully", token });
   } catch (error) {
     res.status(500).json({ message: "Error registering user", error });
   }
