@@ -2,10 +2,10 @@
 # Final Year Project -  Fashnix
 
 # Website is live on below Link
-# https://fashnixx.vercel.app/
+# https://fashnix.vercel.app/
 
 # You can see admin dashboard by using this this link
-# https://fashnixx.vercel.app/admin/login
+# https://fashnix.vercel.app/admin/login
 # By using this below credentials
 # username : admin       <-------->       password: 123
 
