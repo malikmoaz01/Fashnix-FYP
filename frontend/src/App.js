@@ -98,6 +98,7 @@ function App() {
                   <Routes>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="product_management" element={<ProductManagement />} />
+                    {/* <Route path="admin_view_products" element={<ProductManagement />} /> */}
                     <Route path="order_management" element={<OrderManagement />} />
                     <Route path="user_management" element={<UserManagement />} />
                     <Route path="sales_reports" element={<SalesReports />} />
