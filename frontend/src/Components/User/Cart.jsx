@@ -1,154 +1,192 @@
-import React, { useState } from "react";
-import womenDressImg from "../../assets/Sneakers.jpg";
-import CasioWatch from "../../assets/Sales/Casio-Watch.jpg";
-import CoupleSuit from "../../assets/Sales/Couple-Suit.jpg";
-import GoldenWomenCasual from "../../assets/Sales/Golden-Shirt.png";
-import RolexWatch from "../../assets/Sales/Rolex-Watch.jpg";
-import ShalwarQameez from "../../assets/Sales/Shalwar-Qameez.jpg";
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      image: womenDressImg,
-      name: "Sneakers",
-      price: 5000,
-      originalPrice: 7500,
-      discount: "33% OFF",
-      material: "Synthetic",
-      size: 44,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      image: CasioWatch,
-      name: "Casio Watch",
-      price: 7000,
-      originalPrice: 9000,
-      discount: "22% OFF",
-      material: "Stainless Steel",
-      size: "Small",
-      quantity: 1,
-    },
-    {
-      id: 3,
-      image: CoupleSuit,
-      name: "Couple Suit",
-      price: 15000,
-      originalPrice: 20000,
-      discount: "25% OFF",
-      material: "Cotton Blend",
-      size: "XL",
-      quantity: 1,
-    },
-    {
-      id: 4,
-      image: GoldenWomenCasual,
-      name: "Golden Shirt",
-      price: 3000,
-      originalPrice: 4500,
-      discount: "33% OFF",
-      material: "Silk",
-      size: "XL",
-      quantity: 1,
-    },
-    {
-      id: 5,
-      image: RolexWatch,
-      name: "Rolex Watch",
-      price: 25000,
-      originalPrice: 30000,
-      discount: "16% OFF",
-      material: "Gold-Plated",
-      size: "XL",
-      quantity: 1,
-    },
-    {
-      id: 6,
-      image: ShalwarQameez,
-      name: "Shalwar Qameez",
-      price: 4000,
-      originalPrice: 5000,
-      discount: "20% OFF",
-      material: "Lawn",
-      quantity: 1,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [products, setProducts] = useState({});
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const updateQuantity = (id, newQuantity) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(newQuantity, 1) } : item
-      )
+  useEffect(() => {
+    // Load cart items from localStorage
+    const loadCartItems = async () => {
+      try {
+        setLoading(true);
+        
+        // Get cart items from localStorage
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Fetch product details for each cart item
+        const productDetails = {};
+        
+        for (const item of storedCart) {
+          // Only fetch if we don't already have the details
+          if (!productDetails[item.productId]) {
+            try {
+              const res = await fetch(`http://localhost:5000/api/products/${item.productId}`);
+              if (res.ok) {
+                const data = await res.json();
+                productDetails[item.productId] = data;
+              } else {
+                console.error(`Failed to fetch product ${item.productId}`);
+              }
+            } catch (err) {
+              console.error(`Error fetching product ${item.productId}:`, err);
+            }
+          }
+        }
+        
+        setProducts(productDetails);
+        setCartItems(storedCart);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading cart:', err);
+        toast.error('Failed to load cart items');
+        setLoading(false);
+      }
+    };
+
+    loadCartItems();
+  }, []);
+
+  const updateQuantity = (productId, size, newQuantity) => {
+    // Find the item in cart
+    const updatedCart = cartItems.map(item => {
+      if (item.productId === productId && item.size === size) {
+        return { ...item, quantity: Math.max(newQuantity, 1) };
+      }
+      return item;
+    });
+    
+    // Update state and localStorage
+    setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    toast.success('Cart updated!');
+  };
+
+  const removeItem = (productId, size) => {
+    // Filter out the item to remove
+    const updatedCart = cartItems.filter(
+      item => !(item.productId === productId && item.size === size)
     );
+    
+    // Update state and localStorage
+    setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    toast.success('Item removed from cart!');
   };
 
-  const removeItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  // Calculate subtotal based on actual product prices
+  const calculateSubtotal = () => {
+    return cartItems.reduce((sum, item) => {
+      const product = products[item.productId];
+      if (!product) return sum;
+      
+      const price = product.discountPrice || product.price;
+      return sum + (price * item.quantity);
+    }, 0);
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = calculateSubtotal();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-800"></div>
+      </div>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="p-4 max-w-6xl mx-auto text-center">
+        <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+        <div className="p-8 border border-gray-200 rounded-md">
+          <p className="text-gray-600 mb-4">Your cart is empty</p>
+          <Link to="/products">
+            <button className="bg-blue-900 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+              Continue Shopping
+            </button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Cart</h1>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+      <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
       <div className="flex flex-col md:flex-row gap-8">
         {/* Cart Items Section */}
         <div className="flex-1 space-y-4">
-          {cartItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col md:flex-row items-center justify-between border border-blue-800 rounded-md p-4"
-            >
-              <div className="flex items-center gap-4">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-20 h-20 object-cover"
-                />
-                <div>
-                  <h2 className="font-bold">{item.name}</h2>
-                  <p className="text-sm text-gray-600">Material: {item.material}</p>
-                  <p className="text-sm text-gray-600">
-                    Size: {item.size || "N/A"}
-                  </p>
+          {cartItems.map((item) => {
+            const product = products[item.productId];
+            if (!product) return null; // Skip if product details not available
+            
+            return (
+              <div
+                key={`${item.productId}-${item.size}`}
+                className="flex flex-col md:flex-row items-center justify-between border border-blue-800 rounded-md p-4"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={product.images && product.images[0]}
+                    alt={product.name}
+                    className="w-20 h-20 object-cover"
+                  />
+                  <div>
+                    <h2 className="font-bold">{product.name}</h2>
+                    <p className="text-sm text-gray-600">
+                      Size: {item.size || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {product.discountPrice && (
+                        <span className="text-green-600">
+                          {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mt-4 md:mt-0">
+                  <div className="text-right">
+                    {product.discountPrice && (
+                      <p className="text-gray-500 line-through text-sm">
+                        Rs {product.price}
+                      </p>
+                    )}
+                    <p className="text-lg font-bold">
+                      Rs {product.discountPrice || product.price}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}
+                      className="p-2 border rounded"
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
+                      className="p-2 border rounded"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => removeItem(item.productId, item.size)}
+                    className="text-red-500"
+                  >
+                    🗑
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center gap-4 mt-4 md:mt-0">
-                <div className="text-right">
-                  <p className="text-gray-500 line-through text-sm">
-                    Rs {item.originalPrice}
-                  </p>
-                  <p className="text-lg font-bold">Rs {item.price}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="p-2 border rounded"
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="p-2 border rounded"
-                  >
-                    +
-                  </button>
-                </div>
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="text-red-500"
-                >
-                  🗑
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Order Summary Section */}
@@ -167,10 +205,10 @@ const Cart = () => {
             <span>Rs {subtotal}</span>
           </div>
           <Link to="/checkout">
-  <button className="bg-blue-900 text-white w-full py-2 rounded-md mt-4 hover:bg-blue-700 transition">
-    Proceed to Checkout
-  </button>
-</Link>
+            <button className="bg-blue-900 text-white w-full py-2 rounded-md mt-4 hover:bg-blue-700 transition">
+              Proceed to Checkout
+            </button>
+          </Link>
         </div>
       </div>
     </div>

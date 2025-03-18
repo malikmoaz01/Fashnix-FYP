@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { addToCart, addToWishlist } from './CartWishlistService';
 
 const ProductDetail = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,6 +61,20 @@ const ProductDetail = () => {
     return sizeStock ? sizeStock.quantity : 0;
   };
 
+  // Handle add to cart
+  const handleAddToCart = () => {
+    if (product && selectedSize && quantity > 0) {
+      addToCart(productId, selectedSize, quantity, navigate);
+    }
+  };
+
+  // Handle add to wishlist
+  const handleAddToWishlist = () => {
+    if (product) {
+      addToWishlist(productId, navigate);
+    }
+  };
+
   if (loading) return <div className="flex justify-center items-center h-96"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-800"></div></div>;
   
   if (error) return <div className="text-center text-red-600 p-8">Error: {error}</div>;
@@ -70,6 +88,9 @@ const ProductDetail = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
+      {/* Toast container for notifications */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+      
       <div className="mb-4">
         <Link to="/products" className="text-blue-800 hover:underline flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -218,10 +239,14 @@ const ProductDetail = () => {
                   : "bg-gray-400 cursor-not-allowed"
               } font-medium rounded-lg shadow transition`}
               disabled={!selectedSize || getAvailableQuantity() === 0}
+              onClick={handleAddToCart}
             >
               Add to Cart
             </button>
-            <button className="px-6 py-3 border border-blue-800 text-blue-800 font-medium rounded-lg shadow hover:bg-blue-50 transition">
+            <button 
+              className="px-6 py-3 border border-blue-800 text-blue-800 font-medium rounded-lg shadow hover:bg-blue-50 transition"
+              onClick={handleAddToWishlist}
+            >
               Add to Wishlist
             </button>
           </div>
