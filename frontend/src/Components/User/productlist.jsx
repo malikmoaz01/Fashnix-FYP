@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -35,6 +37,26 @@ const ProductList = () => {
     );
     setFilteredProducts(filtered);
   }, [minPrice, maxPrice, minRating, selectedCategory, products]);
+
+  // Function to check if product is out of stock
+  const isOutOfStock = (product) => {
+    // If stock is just a number
+    if (typeof product.stock === 'number') {
+      return product.stock === 0;
+    }
+    
+    // If stock is an array of sizes with quantities
+    if (Array.isArray(product.stock)) {
+      return product.stock.every(item => item.quantity === 0);
+    }
+    
+    return false;
+  };
+
+  // Handle navigate to product detail
+  const handleViewDetails = (productId) => {
+    navigate(`/products/${productId}`);
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
@@ -96,7 +118,7 @@ const ProductList = () => {
           <p className="col-span-full text-center text-gray-500">No Products Found</p>
         ) : (
           filteredProducts.map((product) => {
-            const outOfStock = product.stock === 0;
+            const outOfStock = isOutOfStock(product);
             return (
               <div
                 key={product._id}
@@ -148,6 +170,7 @@ const ProductList = () => {
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700 text-white'
                     } transition`}
+                    onClick={() => handleViewDetails(product._id)}
                   >
                     {outOfStock ? 'Unavailable' : 'View Details'}
                   </button>

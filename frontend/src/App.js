@@ -23,7 +23,7 @@ import CategoriesDropdown from './Components/User/CategoriesDropdown';
 import Signup from './Components/User/SignupForm';
 import Login from './Components/User/LoginForm';
 import ProductList from './Components/User/productlist';
-
+import ProductDetail from './Components/User/ProductDetail'
 // Categories Images & Routes
 import Shirts from './Components/User/Menswear/Shirts';
 import TShirts from './Components/User/Menswear/TShirt';
@@ -139,6 +139,7 @@ function App() {
                 <Route path='/sale-products' element={<SaleProducts/>}/>
                 <Route path='/contact' element={<ContactForm/>}/>
                 <Route path='/products' element={<ProductList/>}/>
+                <Route path="/products/:productId" element={<ProductDetail />} />
 
                 {/* Menswear */}
                 <Route path="/menswear/shirts" element={<Shirts />} />
