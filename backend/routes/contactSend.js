@@ -14,6 +14,6 @@ router.post("/", async (req, res) => {
     console.error("Error sending email:", error);
     res.status(500).send("Error sending email.");
   }
-});
+});    
 
 export default router;

@@ -1,21 +1,19 @@
 import express from 'express';
-import User from '../models/signupModel.js'; // Assuming you have a User model
+import User from '../models/signupModel.js'; 
 const router = express.Router();
 
-// Route to fetch all users
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find(); // Fetch users from the database
+    const users = await User.find(); 
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users', error });
   }
 });
 
-// Route to block or unblock a user
 router.put('/users/:id/block', async (req, res) => {
   const { id } = req.params;
-  const { isBlocked } = req.body; // Expecting { isBlocked: true/false }
+  const { isBlocked } = req.body; 
 
   try {
     const user = await User.findById(id);
@@ -24,9 +22,9 @@ router.put('/users/:id/block', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.isBlocked = isBlocked;  // Set the block status
+    user.isBlocked = isBlocked; 
 
-    await user.save();  // Save updated user data
+    await user.save();
     res.json({ message: `User has been ${isBlocked ? 'blocked' : 'unblocked'}` });
   } catch (error) {
     res.status(500).json({ message: 'Error updating block status', error });

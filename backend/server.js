@@ -12,7 +12,6 @@ import { fileURLToPath } from "url";
 const app = express();
 const PORT = 5000;
 
-// Get the current directory
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 connectDB();
@@ -20,7 +19,6 @@ connectDB();
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-// Serve static files (uploaded images)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api", signupRoutes);

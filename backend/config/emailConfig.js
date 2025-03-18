@@ -9,4 +9,4 @@ export const sendEmail = async ({ firstName, lastName, email, phone, message }) 
     subject: "New Contact Form Submission",
     text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
   });
-};
+};   

@@ -91,12 +91,12 @@ const ProductManagement = () => {
     category: '',
     subcategory: '',
     subsubcategory: '',
-    sizeStock: [], // Temporary array for UI
+    sizeStock: [],
     price: '',
     discountPrice: '',
     rating: '',
     reviews: '',
-    stock: [], // This will be formatted for the backend
+    stock: [],
     images: [],
   });
   const [products, setProducts] = useState([]);
@@ -112,28 +112,23 @@ const ProductManagement = () => {
     }
   };
 
-  // Format the product data before sending to the backend
   const formatProductForSubmission = (product) => {
     const formattedProduct = { ...product };
     
-    // Convert sizeStock to the format expected by the backend
     if (formattedProduct.sizeStock && formattedProduct.sizeStock.length > 0) {
       formattedProduct.stock = formattedProduct.sizeStock.map(item => ({
-        size: item.size.toString(), // Ensure size is a string
-        quantity: parseInt(item.stock, 10) // Ensure quantity is a number
+        size: item.size.toString(), 
+        quantity: parseInt(item.stock, 10) 
       }));
     } else if (formattedProduct.stock && typeof formattedProduct.stock === 'string') {
-      // If no sizes but has stock, create a single stock entry with "Standard" size
       formattedProduct.stock = [{
         size: "Standard",
         quantity: parseInt(formattedProduct.stock, 10)
       }];
     }
     
-    // Remove the temporary sizeStock field
     delete formattedProduct.sizeStock;
     
-    // Ensure numeric fields are numbers
     formattedProduct.price = parseFloat(formattedProduct.price);
     if (formattedProduct.discountPrice) {
       formattedProduct.discountPrice = parseFloat(formattedProduct.discountPrice);
@@ -151,7 +146,6 @@ const ProductManagement = () => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
     if (!newProduct.name || !newProduct.description || !newProduct.category || 
         !newProduct.subcategory || !newProduct.price || newProduct.images.length < 1) {
       alert('Please fill all required fields and add at least one image.');
@@ -196,17 +190,14 @@ const ProductManagement = () => {
   };
 
   const handleEditProduct = (product) => {
-    // Convert backend stock format to frontend format for editing
     const editableProduct = { ...product };
     
     if (product.stock && product.stock.length > 0) {
-      // If product has sizes, set up sizeStock for the UI
       editableProduct.sizeStock = product.stock.map(item => ({
         size: item.size,
         stock: item.quantity
       }));
     } else {
-      // If no sizes, create an empty sizeStock array
       editableProduct.sizeStock = [];
     }
     
@@ -462,7 +453,6 @@ const ProductManagement = () => {
                 <div>
                   <h4 className="mb-2">Sizes & Stock</h4>
                   {getSizeOptions().map((size) => {
-                    // Check if this size already exists in sizeStock
                     const existing = (editProduct ? editProduct.sizeStock : newProduct.sizeStock).find(item => item.size === size);
                     return (
                       <div key={size} className="flex items-center gap-2 mb-2">

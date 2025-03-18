@@ -1,6 +1,5 @@
 import Product from "../models/productSchema.js";
 
-// ➡️ Add New Product
 export const addProduct = async (req, res) => {
   try {
     const { name, description, category, subcategory, subsubcategory, price, discountPrice, rating, reviews, stock, images } = req.body;
@@ -31,7 +30,6 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// ➡️ Get All Products
 export const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
@@ -42,7 +40,6 @@ export const getProducts = async (req, res) => {
   }
 };
 
-// ➡️ Edit Product
 export const editProduct = async (req, res) => {
   const { productId } = req.params;
   const { name, description, category, price, discountPrice, rating, reviews, stock, images } = req.body;
@@ -54,7 +51,6 @@ export const editProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found!" });
     }
 
-    // Update product fields
     product.name = name || product.name;
     product.description = description || product.description;
     product.category = category || product.category;
@@ -73,7 +69,6 @@ export const editProduct = async (req, res) => {
   }
 };
 
-// ➡️ Delete Product
 export const deleteProduct = async (req, res) => {
   const { productId } = req.params;
 

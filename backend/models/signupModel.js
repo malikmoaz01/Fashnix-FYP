@@ -10,5 +10,5 @@ const signupSchema = new mongoose.Schema({
 
 export default mongoose.model("User", signupSchema);
 
-
+   
 

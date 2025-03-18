@@ -118,9 +118,8 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Helper to limit number of images (optional)
 function arrayLimit(val) {
-  return val.length <= 5; // You can change this limit if needed
+  return val.length <= 5; 
 }
 
 const Product = mongoose.model("Product", productSchema);
