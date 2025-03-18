@@ -35,9 +35,7 @@ const ProductManagement = () => {
     try {
       const response = await fetch('http://localhost:5000/api/products', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct),
       });
 
@@ -47,7 +45,18 @@ const ProductManagement = () => {
       } else {
         alert('Product added successfully!');
         setShowAddForm(false);
-        fetchProducts(); // Fetch the updated list of products
+        setNewProduct({
+          name: '',
+          description: '',
+          category: '',
+          price: '',
+          discountPrice: '',
+          rating: '',
+          reviews: '',
+          stock: '',
+          images: [],
+        });
+        fetchProducts();
       }
     } catch (error) {
       console.error('Error adding product:', error);
@@ -55,19 +64,9 @@ const ProductManagement = () => {
     }
   };
 
-  const handleImageChange = (e, index) => {
-    const updatedImages = [...newProduct.images];
-    updatedImages[index] = e.target.value;
-    setNewProduct({ ...newProduct, images: updatedImages });
-  };
-
-  const addImageField = () => {
-    setNewProduct({ ...newProduct, images: [...newProduct.images, ''] });
-  };
-
   const handleEditProduct = (product) => {
     setEditProduct(product);
-    setShowAddForm(true); // Show the add form for editing
+    setShowAddForm(true);
   };
 
   const handleUpdateProduct = async (e) => {
@@ -75,17 +74,15 @@ const ProductManagement = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/products/${editProduct._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editProduct),
       });
 
       if (response.ok) {
         alert('Product updated successfully');
         setEditProduct(null);
-        fetchProducts();
         setShowAddForm(false);
+        fetchProducts();
       } else {
         alert('Failed to update product');
       }
@@ -96,9 +93,8 @@ const ProductManagement = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) {
-      return;
-    }
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+
     try {
       const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
         method: 'DELETE',
@@ -116,9 +112,43 @@ const ProductManagement = () => {
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const handleImageChange = (e, index) => {
+    const updatedImages = [...(editProduct ? editProduct.images : newProduct.images)];
+    updatedImages[index] = e.target.value;
+
+    if (editProduct) {
+      setEditProduct({ ...editProduct, images: updatedImages });
+    } else {
+      setNewProduct({ ...newProduct, images: updatedImages });
+    }
+  };
+
+  const handleFileChange = (e, index) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Image = reader.result;
+      const updatedImages = [...(editProduct ? editProduct.images : newProduct.images)];
+      updatedImages[index] = base64Image;
+
+      if (editProduct) {
+        setEditProduct({ ...editProduct, images: updatedImages });
+      } else {
+        setNewProduct({ ...newProduct, images: updatedImages });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const addImageField = () => {
+    if (editProduct) {
+      setEditProduct({ ...editProduct, images: [...editProduct.images, ''] });
+    } else {
+      setNewProduct({ ...newProduct, images: [...newProduct.images, ''] });
+    }
+  };
 
   const highlightText = (text) => {
     if (!searchTerm) return text;
@@ -129,6 +159,10 @@ const ProductManagement = () => {
       ) : part
     );
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const cards = [
     { name: "Add New Product", value: "Add a new product to your catalog", action: () => setShowAddForm(true) },
@@ -151,7 +185,6 @@ const ProductManagement = () => {
           />
         </div>
 
-        {/* Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cards.map((card) => (
             <div
@@ -165,7 +198,6 @@ const ProductManagement = () => {
           ))}
         </div>
 
-        {/* Add Product Form */}
         {showAddForm && (
           <div className="bg-[#374151] mt-8 p-6 rounded-lg shadow-md text-white">
             <h3 className="text-xl font-semibold mb-4">{editProduct ? "Edit Product" : "Add New Product"}</h3>
@@ -174,34 +206,53 @@ const ProductManagement = () => {
                 type="text"
                 placeholder="Product Name"
                 value={editProduct ? editProduct.name : newProduct.name}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, name: e.target.value }) : setNewProduct({ ...newProduct, name: e.target.value }))}
+                onChange={(e) => (editProduct
+                  ? setEditProduct({ ...editProduct, name: e.target.value })
+                  : setNewProduct({ ...newProduct, name: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
                 required
               />
+
+              {/* Other product fields... */}
+              {/* Description */}
               <textarea
                 placeholder="Description"
                 value={editProduct ? editProduct.description : newProduct.description}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, description: e.target.value }) : setNewProduct({ ...newProduct, description: e.target.value }))}
+                onChange={(e) => (editProduct
+                  ? setEditProduct({ ...editProduct, description: e.target.value })
+                  : setNewProduct({ ...newProduct, description: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
                 required
               />
+
+              {/* Category */}
               <input
                 type="text"
                 placeholder="Product Category"
                 value={editProduct ? editProduct.category : newProduct.category}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, category: e.target.value }) : setNewProduct({ ...newProduct, category: e.target.value }))}
+                onChange={(e) => (editProduct
+                  ? setEditProduct({ ...editProduct, category: e.target.value })
+                  : setNewProduct({ ...newProduct, category: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
                 required
               />
+
+              {/* Price */}
               <input
                 type="number"
                 placeholder="Price (Rs)"
                 value={editProduct ? editProduct.price : newProduct.price}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, price: e.target.value }) : setNewProduct({ ...newProduct, price: e.target.value }))}
+                onChange={(e) => (editProduct
+                  ? setEditProduct({ ...editProduct, price: e.target.value })
+                  : setNewProduct({ ...newProduct, price: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
                 required
               />
-              <input
+                            <input
                 type="number"
                 placeholder="Discount Price (Rs)"
                 value={editProduct ? editProduct.discountPrice : newProduct.discountPrice}
@@ -230,19 +281,33 @@ const ProductManagement = () => {
                 onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, stock: e.target.value }) : setNewProduct({ ...newProduct, stock: e.target.value }))}
                 className="w-full p-3 rounded-md text-black"
               />
-              {/* Images Section */}
+
+              {/* Images */}
               <div>
-                <h4 className="mb-2">Product Images (Add at least 3)</h4>
+                <h4 className="mb-2">Product Images (Add Link or Upload Image)</h4>
                 {(editProduct ? editProduct.images : newProduct.images).map((image, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    placeholder={`Image URL ${index + 1}`}
-                    value={image}
-                    onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, images: e.target.value }) : handleImageChange(e, index))}
-                    className="w-full p-3 rounded-md text-black mb-2"
-                    required
-                  />
+                  <div key={index} className="mb-4">
+                    <input
+                      type="text"
+                      placeholder={`Image URL ${index + 1}`}
+                      value={image.startsWith('data:') ? '' : image}
+                      onChange={(e) => handleImageChange(e, index)}
+                      className="w-full p-3 rounded-md text-black mb-2"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, index)}
+                      className="w-full p-3 rounded-md bg-white text-black"
+                    />
+                    {image && (
+                      <img
+                        src={image}
+                        alt={`Preview ${index + 1}`}
+                        className="mt-2 w-32 h-32 object-cover rounded-md border"
+                      />
+                    )}
+                  </div>
                 ))}
                 <button
                   type="button"
@@ -261,7 +326,10 @@ const ProductManagement = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setShowAddForm(false)}
+                onClick={() => {
+                  setShowAddForm(false);
+                  setEditProduct(null);
+                }}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md ml-4"
               >
                 Cancel
@@ -270,11 +338,9 @@ const ProductManagement = () => {
           </div>
         )}
 
-        {/* Manage Products Section */}
         {showManageProducts && (
           <div className="mt-8 bg-[#374151] p-6 rounded-lg">
             <h3 className="text-2xl font-semibold text-[#F9FAFB]">Manage Products</h3>
-            {/* Products in Card Format */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
               {products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
                 .map((product) => (
@@ -296,44 +362,6 @@ const ProductManagement = () => {
                   </div>
                 ))}
             </div>
-
-            {/* Products in Table Format */}
-            <table className="min-w-full mt-4">
-              <thead>
-                <tr>
-                  <th className="text-left text-white p-3">Name</th>
-                  <th className="text-left text-white p-3">Category</th>
-                  <th className="text-left text-white p-3">Price</th>
-                  <th className="text-left text-white p-3">Stock</th>
-                  <th className="text-left text-white p-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                  .map((product) => (
-                    <tr key={product._id} className="text-white">
-                      <td className="p-3">{highlightText(product.name)}</td>
-                      <td className="p-3">{highlightText(product.category)}</td>
-                      <td className="p-3">{highlightText(product.price)} Rs</td>
-                      <td className="p-3">{highlightText(product.stock)}</td>
-                      <td className="p-3">
-                        <button
-                          onClick={() => handleEditProduct(product)}
-                          className="bg-yellow-600 text-white px-4 py-2 mt-4 rounded-md"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteProduct(product._id)}
-                          className="bg-red-600 text-white px-4 py-2 mt-2 rounded-md"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
           </div>
         )}
       </div>
