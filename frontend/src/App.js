@@ -24,6 +24,8 @@ import Signup from './Components/User/SignupForm';
 import Login from './Components/User/LoginForm';
 import ProductList from './Components/User/productlist';
 import ProductDetail from './Components/User/ProductDetail'
+import Wishlist from './Components/User/Wishlist';
+
 // Categories Images & Routes
 import Shirts from './Components/User/Menswear/Shirts';
 import TShirts from './Components/User/Menswear/TShirt';
@@ -130,6 +132,7 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} />
                 <Route path='/cart' element={<Cart />}/>
+                <Route path='/wishlist' element={<Wishlist/>}/>
                 <Route path='/checkout' element={<Checkout/>}/>
                 <Route path='/account'  element={<UserProfile/>}/>
                 <Route path='/order-history' element={<OrderHistory/>}/>
@@ -140,6 +143,7 @@ function App() {
                 <Route path='/contact' element={<ContactForm/>}/>
                 <Route path='/products' element={<ProductList/>}/>
                 <Route path="/products/:productId" element={<ProductDetail />} />
+
 
                 {/* Menswear */}
                 <Route path="/menswear/shirts" element={<Shirts />} />
