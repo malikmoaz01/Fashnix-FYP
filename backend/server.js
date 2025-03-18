@@ -1,28 +1,25 @@
-
 import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import signupRoutes from "./routes/signupRoutes.js";
 import contactRoutes from "./routes/contactSend.js";
 import loginRoutes from "./routes/loginRoutes.js";
+import productRoutes from "./routes/productRoutes.js"; 
 
 const app = express();
 const PORT = 5000;
 
-// Connect to DB
 connectDB();
 
-// Middlewares
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-// Routes
 app.use("/api", signupRoutes);
 app.use("/api", loginRoutes);
 app.use("/send-email", contactRoutes);
+app.use("/api", productRoutes); 
 
 
-// Start server
 app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
+  console.log(`🚀 Server running on http://localhost:${PORT}`)
 );
