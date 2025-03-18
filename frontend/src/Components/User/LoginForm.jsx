@@ -6,9 +6,31 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    alert("Login successful!");
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        // Backend se error aya toh alert me dikha
+        alert(data.message || "Login failed!");
+      } else {
+        // Successful login
+        alert(data.message);
+        // Navigate to dashboard or homepage
+        navigate("/"); // change path as per your app
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong. Please try again later.");
+    }
   };
 
   return (
