@@ -21,8 +21,8 @@ This project is an E-commerce application that uses machine learning to provide 
 
 ## Tech Stack
 - **Frontend**: React.js with Tailwind CSS
-- **Backend**: Django
-- **Database**: SQLite or MySQL (to be decided)
+- **Backend**: Django/ExpressJS , tensorFlow , Sklearn
+- **Database**: MongoDB
 
 ## Getting Started
 Follow these steps to get the project up and running in your local environment:
