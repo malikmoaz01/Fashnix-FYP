@@ -1,6 +1,85 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const categoriesData = {
+  Shoes: [
+    "Men's Shoes",
+    "Women's Shoes",
+    "Sports Shoes",
+    "Casual Shoes",
+    "Formal Shoes"
+  ],
+  Clothing: [
+    "Men's Clothing",
+    "Women's Clothing",
+    "Kid's Clothing"
+  ],
+  Watches: [
+    "Men's Watches",
+    "Women's Watches",
+    "Smartwatches",
+    "Luxury Watches"
+  ],
+  Accessories: [
+    "Mobile Accessories",
+    "Laptop Accessories",
+    "Other Accessories"
+  ]
+};
+
+const subCategoriesData = {
+  "Men's Clothing": [
+    "T-Shirts",
+    "Jeans",
+    "Jackets",
+    "Formal Wear",
+    "Ethnic Wear"
+  ],
+  "Women's Clothing": [
+    "Dresses",
+    "Tops",
+    "Jeans",
+    "Abayas",
+    "Kurtis",
+    "Ethnic Wear"
+  ],
+  "Kid's Clothing": [
+    "Dresses",
+    "Tops",
+    "Jeans",
+    "Abayas",
+    "Kurtis",
+    "Ethnic Wear"
+  ],
+  "Mobile Accessories": [
+    "Covers",
+    "Chargers",
+    "Headphones",
+    "Smart Gadgets"
+  ],
+  "Laptop Accessories": [
+    "Bags",
+    "Mouse",
+    "Cooling Pads",
+    "Keyboards"
+  ],
+  "Other Accessories": [
+    "Sunglasses",
+    "Belts",
+    "Wallets",
+    "Jewelry"
+  ]
+};
+
+const clothingSizes = ["Standard", "X", "XL", "2XL", "3XL", "4XL", "5XL"];
+const shoeSizes = {
+  "Men's Shoes": [39, 40, 41, 42, 43, 44, 45],
+  "Women's Shoes": [36, 37, 38, 39, 40, 41, 42],
+  "Sports Shoes": [39, 40, 41, 42, 43, 44, 45],
+  "Casual Shoes": [39, 40, 41, 42, 43, 44, 45],
+  "Formal Shoes": [39, 40, 41, 42, 43, 44, 45]
+};
+
 const ProductManagement = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,11 +89,14 @@ const ProductManagement = () => {
     name: '',
     description: '',
     category: '',
+    subcategory: '',
+    subsubcategory: '',
+    sizeStock: [], // Temporary array for UI
     price: '',
     discountPrice: '',
     rating: '',
     reviews: '',
-    stock: '',
+    stock: [], // This will be formatted for the backend
     images: [],
   });
   const [products, setProducts] = useState([]);
@@ -30,13 +112,59 @@ const ProductManagement = () => {
     }
   };
 
+  // Format the product data before sending to the backend
+  const formatProductForSubmission = (product) => {
+    const formattedProduct = { ...product };
+    
+    // Convert sizeStock to the format expected by the backend
+    if (formattedProduct.sizeStock && formattedProduct.sizeStock.length > 0) {
+      formattedProduct.stock = formattedProduct.sizeStock.map(item => ({
+        size: item.size.toString(), // Ensure size is a string
+        quantity: parseInt(item.stock, 10) // Ensure quantity is a number
+      }));
+    } else if (formattedProduct.stock && typeof formattedProduct.stock === 'string') {
+      // If no sizes but has stock, create a single stock entry with "Standard" size
+      formattedProduct.stock = [{
+        size: "Standard",
+        quantity: parseInt(formattedProduct.stock, 10)
+      }];
+    }
+    
+    // Remove the temporary sizeStock field
+    delete formattedProduct.sizeStock;
+    
+    // Ensure numeric fields are numbers
+    formattedProduct.price = parseFloat(formattedProduct.price);
+    if (formattedProduct.discountPrice) {
+      formattedProduct.discountPrice = parseFloat(formattedProduct.discountPrice);
+    }
+    if (formattedProduct.rating) {
+      formattedProduct.rating = parseFloat(formattedProduct.rating);
+    }
+    if (formattedProduct.reviews) {
+      formattedProduct.reviews = parseInt(formattedProduct.reviews, 10);
+    }
+    
+    return formattedProduct;
+  };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!newProduct.name || !newProduct.description || !newProduct.category || 
+        !newProduct.subcategory || !newProduct.price || newProduct.images.length < 1) {
+      alert('Please fill all required fields and add at least one image.');
+      return;
+    }
+    
     try {
+      const formattedProduct = formatProductForSubmission(newProduct);
+      
       const response = await fetch('http://localhost:5000/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct),
+        body: JSON.stringify(formattedProduct),
       });
 
       const data = await response.json();
@@ -49,11 +177,14 @@ const ProductManagement = () => {
           name: '',
           description: '',
           category: '',
+          subcategory: '',
+          subsubcategory: '',
+          sizeStock: [],
           price: '',
           discountPrice: '',
           rating: '',
           reviews: '',
-          stock: '',
+          stock: [],
           images: [],
         });
         fetchProducts();
@@ -65,17 +196,34 @@ const ProductManagement = () => {
   };
 
   const handleEditProduct = (product) => {
-    setEditProduct(product);
+    // Convert backend stock format to frontend format for editing
+    const editableProduct = { ...product };
+    
+    if (product.stock && product.stock.length > 0) {
+      // If product has sizes, set up sizeStock for the UI
+      editableProduct.sizeStock = product.stock.map(item => ({
+        size: item.size,
+        stock: item.quantity
+      }));
+    } else {
+      // If no sizes, create an empty sizeStock array
+      editableProduct.sizeStock = [];
+    }
+    
+    setEditProduct(editableProduct);
     setShowAddForm(true);
   };
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
+    
     try {
+      const formattedProduct = formatProductForSubmission(editProduct);
+      
       const response = await fetch(`http://localhost:5000/api/products/${editProduct._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editProduct),
+        body: JSON.stringify(formattedProduct),
       });
 
       if (response.ok) {
@@ -84,7 +232,8 @@ const ProductManagement = () => {
         setShowAddForm(false);
         fetchProducts();
       } else {
-        alert('Failed to update product');
+        const data = await response.json();
+        alert(data.message || 'Failed to update product');
       }
     } catch (error) {
       console.error("Error updating product:", error);
@@ -110,6 +259,38 @@ const ProductManagement = () => {
       console.error('Error deleting product:', error);
       alert('Something went wrong!');
     }
+  };
+
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    setNewProduct({
+      ...newProduct,
+      category: selectedCategory,
+      subcategory: '',
+      subsubcategory: '',
+      sizeStock: [],
+    });
+  };
+  
+  const handleSubCategoryChange = (e) => {
+    const selectedSubcategory = e.target.value;
+    setNewProduct({
+      ...newProduct,
+      subcategory: selectedSubcategory,
+      subsubcategory: '',
+      sizeStock: []
+    });
+  };
+
+  const getSizeOptions = () => {
+    if (shoeSizes[newProduct.subcategory]) {
+      return shoeSizes[newProduct.subcategory].map(size => size.toString());
+    }
+    if (subCategoriesData["Men's Clothing"]?.includes(newProduct.subsubcategory) ||
+        subCategoriesData["Women's Clothing"]?.includes(newProduct.subsubcategory)) {
+      return clothingSizes;
+    }
+    return [];
   };
 
   const handleImageChange = (e, index) => {
@@ -164,12 +345,6 @@ const ProductManagement = () => {
     fetchProducts();
   }, []);
 
-  const cards = [
-    { name: "Add New Product", value: "Add a new product to your catalog", action: () => setShowAddForm(true) },
-    { name: "Manage Products", value: "View and manage existing products", action: () => setShowManageProducts(true) },
-    { name: "Edit, Delete, View Products", value: "Edit, delete, or view product details", action: () => setShowManageProducts(true) },
-  ];
-
   return (
     <div className="bg-gradient-to-b from-[#1F2937] to-[#4B5563] min-h-screen">
       <div className="container mx-auto px-4 py-8">
@@ -186,16 +361,29 @@ const ProductManagement = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cards.map((card) => (
-            <div
-              key={card.name}
-              className="bg-[#374151] rounded-lg shadow-md p-6 cursor-pointer"
-              onClick={card.action}
-            >
-              <h3 className="text-lg font-semibold text-[#9CA3AF]">{highlightText(card.name)}</h3>
-              <p className="text-2xl font-bold text-[#F9FAFB] mt-2">{highlightText(card.value)}</p>
-            </div>
-          ))}
+          <div
+            className="bg-[#374151] rounded-lg shadow-md p-6 cursor-pointer"
+            onClick={() => setShowAddForm(true)}
+          >
+            <h3 className="text-lg font-semibold text-[#9CA3AF]">
+              {highlightText("Add New Product")}
+            </h3>
+            <p className="text-2xl font-bold text-[#F9FAFB] mt-2">
+              {highlightText("Add a new product to your catalog")}
+            </p>
+          </div>
+
+          <div
+            className="bg-[#374151] rounded-lg shadow-md p-6 cursor-pointer"
+            onClick={() => setShowManageProducts(true)}
+          >
+            <h3 className="text-lg font-semibold text-[#9CA3AF]">
+              {highlightText("Manage Products")}
+            </h3>
+            <p className="text-2xl font-bold text-[#F9FAFB] mt-2">
+              {highlightText("View and manage existing products")}
+            </p>
+          </div>
         </div>
 
         {showAddForm && (
@@ -206,39 +394,107 @@ const ProductManagement = () => {
                 type="text"
                 placeholder="Product Name"
                 value={editProduct ? editProduct.name : newProduct.name}
-                onChange={(e) => (editProduct
+                onChange={(e) => editProduct 
                   ? setEditProduct({ ...editProduct, name: e.target.value })
                   : setNewProduct({ ...newProduct, name: e.target.value })
-                )}
+                }
                 className="w-full p-3 rounded-md text-black"
                 required
               />
 
-              {/* Other product fields... */}
-              {/* Description */}
               <textarea
                 placeholder="Description"
                 value={editProduct ? editProduct.description : newProduct.description}
-                onChange={(e) => (editProduct
+                onChange={(e) => editProduct
                   ? setEditProduct({ ...editProduct, description: e.target.value })
                   : setNewProduct({ ...newProduct, description: e.target.value })
-                )}
+                }
                 className="w-full p-3 rounded-md text-black"
                 required
               />
 
-              {/* Category */}
-              <input
-                type="text"
-                placeholder="Product Category"
+              <select
                 value={editProduct ? editProduct.category : newProduct.category}
-                onChange={(e) => (editProduct
-                  ? setEditProduct({ ...editProduct, category: e.target.value })
-                  : setNewProduct({ ...newProduct, category: e.target.value })
-                )}
+                onChange={handleCategoryChange}
                 className="w-full p-3 rounded-md text-black"
                 required
-              />
+              >
+                <option value="">Select Category</option>
+                {Object.keys(categoriesData).map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+
+              {(editProduct ? editProduct.category : newProduct.category) && (
+                <select
+                  value={editProduct ? editProduct.subcategory : newProduct.subcategory}
+                  onChange={handleSubCategoryChange}
+                  className="w-full p-3 rounded-md text-black"
+                  required
+                >
+                  <option value="">Select Subcategory</option>
+                  {categoriesData[editProduct ? editProduct.category : newProduct.category].map((subcategory) => (
+                    <option key={subcategory} value={subcategory}>{subcategory}</option>
+                  ))}
+                </select>
+              )}
+
+              {subCategoriesData[editProduct ? editProduct.subcategory : newProduct.subcategory] && (
+                <div>
+                  <h4 className="mb-2">Select Sub-Sub Category</h4>
+                  <select
+                    className="w-full p-3 rounded-md text-black"
+                    onChange={(e) => editProduct
+                      ? setEditProduct({ ...editProduct, subsubcategory: e.target.value })
+                      : setNewProduct({ ...newProduct, subsubcategory: e.target.value })
+                    }
+                    value={editProduct ? editProduct.subsubcategory || '' : newProduct.subsubcategory || ''}
+                  >
+                    <option value="">Select Item Type</option>
+                    {subCategoriesData[editProduct ? editProduct.subcategory : newProduct.subcategory].map((item) => (
+                      <option key={item} value={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {getSizeOptions().length > 0 && (
+                <div>
+                  <h4 className="mb-2">Sizes & Stock</h4>
+                  {getSizeOptions().map((size) => {
+                    // Check if this size already exists in sizeStock
+                    const existing = (editProduct ? editProduct.sizeStock : newProduct.sizeStock).find(item => item.size === size);
+                    return (
+                      <div key={size} className="flex items-center gap-2 mb-2">
+                        <label className="w-1/3">{size}</label>
+                        <input
+                          type="number"
+                          placeholder="Stock"
+                          className="w-2/3 p-2 rounded-md text-black"
+                          value={existing ? existing.stock : ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            let updatedSizeStock = [...(editProduct ? editProduct.sizeStock : newProduct.sizeStock)];
+                            const index = updatedSizeStock.findIndex(item => item.size === size);
+
+                            if (index > -1) {
+                              updatedSizeStock[index].stock = value;
+                            } else {
+                              updatedSizeStock.push({ size, stock: value });
+                            }
+
+                            if (editProduct) {
+                              setEditProduct({ ...editProduct, sizeStock: updatedSizeStock });
+                            } else {
+                              setNewProduct({ ...newProduct, sizeStock: updatedSizeStock });
+                            }
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Price */}
               <input
@@ -252,11 +508,14 @@ const ProductManagement = () => {
                 className="w-full p-3 rounded-md text-black"
                 required
               />
-                            <input
+              <input
                 type="number"
                 placeholder="Discount Price (Rs)"
                 value={editProduct ? editProduct.discountPrice : newProduct.discountPrice}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, discountPrice: e.target.value }) : setNewProduct({ ...newProduct, discountPrice: e.target.value }))}
+                onChange={(e) => (editProduct 
+                  ? setEditProduct({ ...editProduct, discountPrice: e.target.value }) 
+                  : setNewProduct({ ...newProduct, discountPrice: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
               />
               <input
@@ -264,23 +523,35 @@ const ProductManagement = () => {
                 step="0.1"
                 placeholder="Rating (e.g., 4.6)"
                 value={editProduct ? editProduct.rating : newProduct.rating}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, rating: e.target.value }) : setNewProduct({ ...newProduct, rating: e.target.value }))}
+                onChange={(e) => (editProduct 
+                  ? setEditProduct({ ...editProduct, rating: e.target.value }) 
+                  : setNewProduct({ ...newProduct, rating: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
               />
               <input
                 type="number"
                 placeholder="Reviews Count"
                 value={editProduct ? editProduct.reviews : newProduct.reviews}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, reviews: e.target.value }) : setNewProduct({ ...newProduct, reviews: e.target.value }))}
+                onChange={(e) => (editProduct 
+                  ? setEditProduct({ ...editProduct, reviews: e.target.value }) 
+                  : setNewProduct({ ...newProduct, reviews: e.target.value })
+                )}
                 className="w-full p-3 rounded-md text-black"
               />
-              <input
-                type="number"
-                placeholder="Stock"
-                value={editProduct ? editProduct.stock : newProduct.stock}
-                onChange={(e) => (editProduct ? setEditProduct({ ...editProduct, stock: e.target.value }) : setNewProduct({ ...newProduct, stock: e.target.value }))}
-                className="w-full p-3 rounded-md text-black"
-              />
+              {getSizeOptions().length === 0 && (
+                <input
+                  type="number"
+                  placeholder="Stock"
+                  value={editProduct ? editProduct.stock : newProduct.stock}
+                  onChange={(e) => (editProduct
+                    ? setEditProduct({ ...editProduct, stock: e.target.value })
+                    : setNewProduct({ ...newProduct, stock: e.target.value })
+                  )}
+                  className="w-full p-3 rounded-md text-black"
+                  required
+                />
+              )}
 
               {/* Images */}
               <div>

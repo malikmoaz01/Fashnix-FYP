@@ -17,12 +17,12 @@ const UserManagement = () => {
         const active = data.filter(user => user && !user.isBlocked); // Added check for undefined
         const blocked = data.filter(user => user && user.isBlocked); // Added check for undefined
 
-        setActiveUsers(active);  // Store the active users in state
-        setBlockedUsers(blocked);  // Store the blocked users in state
+        setActiveUsers(active);  
+        setBlockedUsers(blocked);
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
-        setLoading(false);  // Set loading to false once data is fetched
+        setLoading(false);
       }
     };
 
