@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Admin components
 import HeaderAdmin from './Components/Admin/AdminHeader';
@@ -57,6 +58,12 @@ import NewArrival from './Components/User/NewArrival';
 import SaleProducts from './Components/User/SaleProducts';
 import ContactForm from './Components/User/Contact';
 function App() {
+
+
+  const GOOGLE_CLIENT_ID = "123922841654-i1jujo69c525uji333d5q2v8rksq5est.apps.googleusercontent.com";
+  
+
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -86,6 +93,7 @@ function App() {
   };
 
   return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <Router>
       <Routes>
         {/* Admin routes */}
@@ -135,8 +143,8 @@ function App() {
                 <Route path='/wishlist' element={<Wishlist/>}/>
                 <Route path='/checkout' element={<Checkout/>}/>
                 <Route path='/account'  element={<UserProfile/>}/>
-                <Route path='/order-history' element={<OrderHistory/>}/>
-                <Route path='/payment-methods' element={<PaymentMethod/>}/>
+                <Route path='/account/orders' element={<OrderHistory/>}/>
+                <Route path='/account/payment-methods' element={<PaymentMethod/>}/>
                 <Route path='/product-overview' element={<ProductOverview/>}/>
                 <Route path='/newArrivals' element={<NewArrival/>}/>
                 <Route path='/sale-products' element={<SaleProducts/>}/>
@@ -176,6 +184,7 @@ function App() {
         />
       </Routes>
     </Router>
+    </GoogleOAuthProvider>
   );
 }
 

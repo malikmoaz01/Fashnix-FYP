@@ -31,7 +31,7 @@ const Checkout = () => {
         city: "",
         state: "",
         postalCode: "",
-        country: "India",
+        country: "Pakistan",
       },
     },
     delivery: {
@@ -278,7 +278,7 @@ const Checkout = () => {
       default:
         return <div>Invalid step</div>;
     }
-  };
+  }; 
 
   return (
     <div className="p-4 max-w-6xl mx-auto">

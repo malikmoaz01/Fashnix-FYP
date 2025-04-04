@@ -1,10 +1,44 @@
 import { useState, useEffect } from 'react';
 import CategoriesDropdown from './CategoriesDropdown';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [categoriesOpen, setCategoriesOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+
+    // Load user data and set up event listeners
+    useEffect(() => {
+        // Initial load of user data
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        setUser(storedUser);
+        
+        // Function to handle storage changes
+        const handleStorageChange = () => {
+            const updatedUser = JSON.parse(localStorage.getItem('user'));
+            setUser(updatedUser);
+        };
+        
+        // Set up event listeners for both custom events and storage events
+        window.addEventListener('storageUpdated', handleStorageChange);
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Check for user data periodically (backup method)
+        const intervalId = setInterval(() => {
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            if (JSON.stringify(currentUser) !== JSON.stringify(user)) {
+                setUser(currentUser);
+            }
+        }, 1000);
+        
+        // Clean up listeners and interval
+        return () => {
+            window.removeEventListener('storageUpdated', handleStorageChange);
+            window.removeEventListener('storage', handleStorageChange);
+            clearInterval(intervalId);
+        };
+    }, []);
 
     // Close menus when clicking outside
     useEffect(() => {
@@ -20,6 +54,16 @@ const Navbar = () => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
+
+    // Handle logout
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/');
+        
+        // Dispatch storage updated event
+        window.dispatchEvent(new Event('storageUpdated'));
+    };
 
     return (
         <nav className="relative bg-blue-900 sticky top-0 z-20 w-full">
@@ -45,9 +89,20 @@ const Navbar = () => {
                 </div>
                 
                 <div className="hidden md:flex gap-4">
-                    <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/login">Login</Link>
-                    <span className="text-white">|</span>
-                    <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/signup">Sign Up</Link>
+                    {user ? (
+                        <button 
+                            className="font-light text-white hover:text-pink-300 hover:underline" 
+                            onClick={handleLogout}
+                        >
+                            Log Out
+                        </button>
+                    ) : (
+                        <>
+                            <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/login">Login</Link>
+                            <span className="text-white">|</span>
+                            <Link className="font-light text-white hover:text-pink-300 hover:underline" to="/signup">Sign Up</Link>
+                        </>
+                    )}
                 </div>
                 
                 <button 
@@ -72,8 +127,22 @@ const Navbar = () => {
                     <Link className="py-2 hover:text-pink-300" to="/about-us" onClick={() => setMobileMenuOpen(false)}>About</Link>
                     <Link className="py-2 hover:text-pink-300" to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
                     <hr className="my-2 w-full border-gray-500" />
-                    <Link className="py-2 hover:text-pink-300" to="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-                    <Link className="py-2 hover:text-pink-300" to="/signup" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
+                    {user ? (
+                        <button 
+                            className="py-2 hover:text-pink-300" 
+                            onClick={() => {
+                                handleLogout();
+                                setMobileMenuOpen(false);
+                            }}
+                        >
+                            Log Out
+                        </button>
+                    ) : (
+                        <>
+                            <Link className="py-2 hover:text-pink-300" to="/login" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+                            <Link className="py-2 hover:text-pink-300" to="/signup" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
+                        </>
+                    )}
                 </div>
             )}
         </nav>
