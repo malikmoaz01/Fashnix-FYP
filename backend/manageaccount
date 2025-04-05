@@ -1,390 +1,416 @@
-// // loginController.js
-// import bcrypt from "bcryptjs";  
-// import User from "../models/signupModel.js";
-// import { OAuth2Client } from "google-auth-library";
+// // // loginController.js
+// // import bcrypt from "bcryptjs";  
+// // import User from "../models/signupModel.js";
+// // import { OAuth2Client } from "google-auth-library";
 
-// const GOOGLE_CLIENT_ID = "123922841654-i1jujo69c525uji333d5q2v8rksq5est.apps.googleusercontent.com"; 
-// const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+// // const GOOGLE_CLIENT_ID = "123922841654-i1jujo69c525uji333d5q2v8rksq5est.apps.googleusercontent.com"; 
+// // const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-// export const loginUser = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
+// // export const loginUser = async (req, res) => {
+// //   try {
+// //     const { email, password } = req.body;
 
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found!" });
-//     }
+// //     const user = await User.findOne({ email });
+// //     if (!user) {
+// //       return res.status(404).json({ message: "User not found!" });
+// //     }
 
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) {
-//       return res.status(401).json({ message: "Invalid credentials!" });
-//     }
+// //     const isMatch = await bcrypt.compare(password, user.password);
+// //     if (!isMatch) {
+// //       return res.status(401).json({ message: "Invalid credentials!" });
+// //     }
 
-//     // Creating a user object without sensitive data
-//     const userForClient = {
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       profileImage: user.profileImage,
-//     };
+// //     // Creating a user object without sensitive data
+// //     const userForClient = {
+// //       id: user._id,
+// //       name: user.name,
+// //       email: user.email,
+// //       profileImage: user.profileImage,
+// //     };
 
-//     res.status(200).json({ message: "Login successful!", user: userForClient });
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     res.status(500).json({ message: "Internal server error!" });
-//   }
-// };
+// //     res.status(200).json({ message: "Login successful!", user: userForClient });
+// //   } catch (error) {
+// //     console.error("Login error:", error);
+// //     res.status(500).json({ message: "Internal server error!" });
+// //   }
+// // };
 
-// // Google Login
-// export const googleLogin = async (req, res) => {
-//   try {
-//     const { googleToken, email, name, profileImage } = req.body;
+// // // Google Login
+// // export const googleLogin = async (req, res) => {
+// //   try {
+// //     const { googleToken, email, name, profileImage } = req.body;
 
-//     // Verify the Google token
-//     const ticket = await client.verifyIdToken({
-//       idToken: googleToken,
-//       audience: GOOGLE_CLIENT_ID,
-//     });
+// //     // Verify the Google token
+// //     const ticket = await client.verifyIdToken({
+// //       idToken: googleToken,
+// //       audience: GOOGLE_CLIENT_ID,
+// //     });
 
-//     const payload = ticket.getPayload();
+// //     const payload = ticket.getPayload();
 
-//     if (payload.email !== email) {
-//       return res.status(400).json({ message: "Email verification failed" });
-//     }
+// //     if (payload.email !== email) {
+// //       return res.status(400).json({ message: "Email verification failed" });
+// //     }
 
-//     let user = await User.findOne({ email });
+// //     let user = await User.findOne({ email });
 
-//     if (!user) {
-//       const randomPassword = Math.random().toString(36).slice(-8);
-//       const salt = await bcrypt.genSalt(10);
-//       const hashedPassword = await bcrypt.hash(randomPassword, salt);
+// //     if (!user) {
+// //       const randomPassword = Math.random().toString(36).slice(-8);
+// //       const salt = await bcrypt.genSalt(10);
+// //       const hashedPassword = await bcrypt.hash(randomPassword, salt);
 
-//       user = new User({
-//         name,
-//         email,
-//         password: hashedPassword,
-//         profileImage,
-//         googleId: payload.sub,
-//       });
+// //       user = new User({
+// //         name,
+// //         email,
+// //         password: hashedPassword,
+// //         profileImage,
+// //         googleId: payload.sub,
+// //       });
 
-//       await user.save();
-//     } else if (profileImage && (!user.profileImage || user.profileImage !== profileImage)) {
-//       user.profileImage = profileImage;
-//       await user.save();
-//     }
+// //       await user.save();
+// //     } else if (profileImage && (!user.profileImage || user.profileImage !== profileImage)) {
+// //       user.profileImage = profileImage;
+// //       await user.save();
+// //     }
 
-//     const userForClient = {
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       profileImage: user.profileImage,
-//       isGoogleUser: true,
-//     };
+// //     const userForClient = {
+// //       id: user._id,
+// //       name: user.name,
+// //       email: user.email,
+// //       profileImage: user.profileImage,
+// //       isGoogleUser: true,
+// //     };
 
-//     return res.status(200).json({
-//       message: "Google login successful",
-//       user: userForClient,
-//     });
+// //     return res.status(200).json({
+// //       message: "Google login successful",
+// //       user: userForClient,
+// //     });
 
-//   } catch (error) {
-//     console.error("Google login error:", error);
-//     return res.status(500).json({ message: "Authentication failed" });
-//   }
-// };
+// //   } catch (error) {
+// //     console.error("Google login error:", error);
+// //     return res.status(500).json({ message: "Authentication failed" });
+// //   }
+// // };
 
-// // signupController.js
+// // // signupController.js
 
-// import bcrypt from "bcryptjs";  // Consistently using bcryptjs
-// import User from "../models/signupModel.js";
-// import multer from "multer";
-// import path from "path";
+// // import bcrypt from "bcryptjs";  // Consistently using bcryptjs
+// // import User from "../models/signupModel.js";
+// // import multer from "multer";
+// // import path from "path";
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/'); 
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + path.extname(file.originalname)); 
-//   }
-// });
+// // const storage = multer.diskStorage({
+// //   destination: function (req, file, cb) {
+// //     cb(null, 'uploads/'); 
+// //   },
+// //   filename: function (req, file, cb) {
+// //     cb(null, Date.now() + path.extname(file.originalname)); 
+// //   }
+// // });
 
-// const upload = multer({
-//   storage: storage,
-//   limits: { fileSize: 5 * 1024 * 1024 }, 
-//   fileFilter: (req, file, cb) => {
-//     if (file.mimetype.startsWith("image/")) {
-//       cb(null, true);
-//     } else {
-//       cb(new Error("Invalid file type, only images are allowed"), false);
-//     }
-//   },
-// });
+// // const upload = multer({
+// //   storage: storage,
+// //   limits: { fileSize: 5 * 1024 * 1024 }, 
+// //   fileFilter: (req, file, cb) => {
+// //     if (file.mimetype.startsWith("image/")) {
+// //       cb(null, true);
+// //     } else {
+// //       cb(new Error("Invalid file type, only images are allowed"), false);
+// //     }
+// //   },
+// // });
 
-// export const signupUser = async (req, res) => {
-//   upload.single("profileImage")(req, res, async (err) => {
-//     if (err) {
-//       return res.status(400).json({ message: err.message });
-//     }
+// // export const signupUser = async (req, res) => {
+// //   upload.single("profileImage")(req, res, async (err) => {
+// //     if (err) {
+// //       return res.status(400).json({ message: err.message });
+// //     }
 
-//     try {
-//       const { name, email, password } = req.body;
-//       const profileImage = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : null;
+// //     try {
+// //       const { name, email, password } = req.body;
+// //       const profileImage = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : null;
 
-//       const existingUser = await User.findOne({ email });
-//       if (existingUser) {
-//         return res.status(400).json({ message: "Email already exists!" });
-//       }
+// //       const existingUser = await User.findOne({ email });
+// //       if (existingUser) {
+// //         return res.status(400).json({ message: "Email already exists!" });
+// //       }
 
-//       // Using bcryptjs for hashing
-//       const salt = await bcrypt.genSalt(10);
-//       const hashedPassword = await bcrypt.hash(password, salt);
+// //       // Using bcryptjs for hashing
+// //       const salt = await bcrypt.genSalt(10);
+// //       const hashedPassword = await bcrypt.hash(password, salt);
 
-//       const newUser = new User({
-//         name,
-//         email,
-//         password: hashedPassword,
-//         profileImage,
-//       });
+// //       const newUser = new User({
+// //         name,
+// //         email,
+// //         password: hashedPassword,
+// //         profileImage,
+// //       });
 
-//       await newUser.save();
+// //       await newUser.save();
 
-//       res.status(201).json({ message: "User registered successfully!" });
-//     } catch (error) {
-//       console.error("Signup error:", error);
-//       res.status(500).json({ message: "Internal server error!" });
-//     }
-//   });
-// };
+// //       res.status(201).json({ message: "User registered successfully!" });
+// //     } catch (error) {
+// //       console.error("Signup error:", error);
+// //       res.status(500).json({ message: "Internal server error!" });
+// //     }
+// //   });
+// // };
 
-// // userController.js
-// import User from '../models/userModel.js';
+// // // userController.js
+// // import User from '../models/userModel.js';
+// // import ShippingAddress from '../models/ShippingAddress.js';
+// // import multer from 'multer';
+// // import path from 'path';
+// // import fs from 'fs';
+// // import asyncHandler from 'express-async-handler';
+
+// // // Create uploads directory if it doesn't exist
+// // const uploadDir = 'uploads/profiles';
+// // if (!fs.existsSync(uploadDir)) {
+// //   fs.mkdirSync(uploadDir, { recursive: true });
+// // }
+
+// // // Configure multer storage for profile images
+// // const storage = multer.diskStorage({
+// //   destination: function (req, file, cb) {
+// //     cb(null, uploadDir);
+// //   },
+// //   filename: function (req, file, cb) {
+// //     cb(null, `user-${req.user._id}-${Date.now()}${path.extname(file.originalname)}`);
+// //   }
+// // });
+
+// // // File filter
+// // const fileFilter = (req, file, cb) => {
+// //   if (file.mimetype.startsWith('image/')) {
+// //     cb(null, true);
+// //   } else {
+// //     cb(new Error('Only image files are allowed!'), false);
+// //   }
+// // };
+
+// // const upload = multer({ 
+// //   storage: storage,
+// //   fileFilter: fileFilter,
+// //   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+// // });
+
+// // // @desc    Get user profile
+// // // @route   GET /api/users/profile
+// // // @access  Private
+// // export const getUserProfile = asyncHandler(async (req, res) => {
+// //   const user = await User.findById(req.user._id).populate('shippingAddress');
+  
+// //   if (user) {
+// //     res.json({
+// //       _id: user._id,
+// //       name: user.name,
+// //       email: user.email,
+// //       phone: user.phone || '',
+// //       profileImage: user.profileImage || '',
+// //       address: user.shippingAddress ? user.shippingAddress.address : '',
+// //       street: user.shippingAddress ? user.shippingAddress.street : '',
+// //       city: user.shippingAddress ? user.shippingAddress.city : '',
+// //     });
+// //   } else {
+// //     res.status(404);
+// //     throw new Error('User not found');
+// //   }
+// // });
+
+// // // @desc    Update user profile
+// // // @route   PUT /api/users/profile
+// // // @access  Private
+// // export const updateUserProfile = asyncHandler(async (req, res) => {
+// //   const user = await User.findById(req.user._id);
+  
+// //   if (user) {
+// //     // Update basic user info
+// //     user.name = req.body.name || user.name;
+// //     user.email = req.body.email || user.email;
+// //     user.phone = req.body.phone || user.phone;
+    
+// //     if (req.body.profileImage) {
+// //       user.profileImage = req.body.profileImage;
+// //     }
+    
+// //     // Handle shipping address
+// //     if (req.body.address || req.body.street || req.body.city) {
+// //       // If user already has a shipping address, update it
+// //       if (user.shippingAddress) {
+// //         const address = await ShippingAddress.findById(user.shippingAddress);
+// //         if (address) {
+// //           address.address = req.body.address || address.address;
+// //           address.street = req.body.street || address.street;
+// //           address.city = req.body.city || address.city;
+// //           await address.save();
+// //         } else {
+// //           // Create new address if the reference exists but the actual document doesn't
+// //           const newAddress = await ShippingAddress.create({
+// //             address: req.body.address || '',
+// //             street: req.body.street || '',
+// //             city: req.body.city || ''
+// //           });
+// //           user.shippingAddress = newAddress._id;
+// //         }
+// //       } else {
+// //         // Create new address if user doesn't have one
+// //         const newAddress = await ShippingAddress.create({
+// //           address: req.body.address || '',
+// //           street: req.body.street || '',
+// //           city: req.body.city || ''
+// //         });
+// //         user.shippingAddress = newAddress._id;
+// //       }
+// //     }
+    
+// //     const updatedUser = await user.save();
+    
+// //     // Fetch the updated user with populated address
+// //     const populatedUser = await User.findById(updatedUser._id).populate('shippingAddress');
+    
+// //     res.json({
+// //       _id: populatedUser._id,
+// //       name: populatedUser.name,
+// //       email: populatedUser.email,
+// //       phone: populatedUser.phone || '',
+// //       profileImage: populatedUser.profileImage || '',
+// //       address: populatedUser.shippingAddress ? populatedUser.shippingAddress.address : '',
+// //       street: populatedUser.shippingAddress ? populatedUser.shippingAddress.street : '',
+// //       city: populatedUser.shippingAddress ? populatedUser.shippingAddress.city : '',
+// //     });
+// //   } else {
+// //     res.status(404);
+// //     throw new Error('User not found');
+// //   }
+// // });
+
+// // // @desc    Upload profile image
+// // // @route   POST /api/users/upload-profile-image
+// // // @access  Private
+// // export const uploadProfileImage = asyncHandler(async (req, res) => {
+// //   const uploadSingle = upload.single('profileImage');
+  
+// //   uploadSingle(req, res, async function(err) {
+// //     if (err instanceof multer.MulterError) {
+// //       // A Multer error occurred during upload
+// //       res.status(400);
+// //       throw new Error(`Multer upload error: ${err.message}`);
+// //     } else if (err) {
+// //       // An unknown error occurred
+// //       res.status(500);
+// //       throw new Error(`Unknown upload error: ${err.message}`);
+// //     }
+    
+// //     // If file upload was successful
+// //     if (!req.file) {
+// //       res.status(400);
+// //       throw new Error('No file uploaded');
+// //     }
+    
+// //     try {
+// //       // Update user profile with new image path
+// //       const user = await User.findById(req.user._id);
+      
+// //       if (!user) {
+// //         res.status(404);
+// //         throw new Error('User not found');
+// //       }
+      
+// //       // Set the image URL (adjust based on your server setup)
+// //       const imageUrl = `/uploads/profiles/${req.file.filename}`;
+// //       user.profileImage = imageUrl;
+// //       await user.save();
+      
+// //       res.json({ 
+// //         message: 'Profile image uploaded successfully',
+// //         imageUrl: imageUrl
+// //       });
+// //     } catch (error) {
+// //       console.error('Error saving image reference:', error);
+// //       res.status(500);
+// //       throw new Error('Failed to update profile with new image');
+// //     }
+// //   });
+// // });
+
+// // // signupModel.js
+// // import mongoose from "mongoose";
+// // import bcrypt from "bcryptjs";  // Changed to bcryptjs to match controllers
+
+// // const userSchema = new mongoose.Schema({
+// //   name: { type: String, required: true },
+// //   email: { type: String, required: true, unique: true },
+// //   password: { type: String, required: true },
+// //   profileImage: { type: String, required: false },
+// //   googleId: { type: String, required: false },
+// //   shippingAddress: {
+// //     type: mongoose.Schema.Types.ObjectId,
+// //     ref: 'ShippingAddress', 
+// //     required: false
+// //   },
+// //   isBlocked: { type: Boolean, default: false },
+// // });
+
+
+// // userSchema.methods.matchPassword = async function (enteredPassword) {
+// //   try {
+// //     return await bcrypt.compare(enteredPassword, this.password);
+// //   } catch (error) {
+// //     throw error;
+// //   }
+// // };
+
+// // export default mongoose.model("User", userSchema);
+
+// // // shippingAddressModel.js
+
+// // import mongoose from 'mongoose';
+
+// // const shippingAddressSchema = new mongoose.Schema({
+// //     address: { type: String, required: true },
+// //     street: { type: String, required: true },
+// //     city: { type: String, required: true },
+// // });
+
+// // const ShippingAddress = mongoose.model('ShippingAddress', shippingAddressSchema);
+
+// // export default ShippingAddress;
+
+// // // userRoutes.js
+// // userRoutes.js - Modified version
+
+// import express from 'express';
+// import User from '../models/signupModel.js';
 // import ShippingAddress from '../models/ShippingAddress.js';
 // import multer from 'multer';
 // import path from 'path';
-// import fs from 'fs';
-// import asyncHandler from 'express-async-handler';
-
-// // Create uploads directory if it doesn't exist
-// const uploadDir = 'uploads/profiles';
-// if (!fs.existsSync(uploadDir)) {
-//   fs.mkdirSync(uploadDir, { recursive: true });
-// }
-
-// // Configure multer storage for profile images
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, uploadDir);
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, `user-${req.user._id}-${Date.now()}${path.extname(file.originalname)}`);
-//   }
-// });
-
-// // File filter
-// const fileFilter = (req, file, cb) => {
-//   if (file.mimetype.startsWith('image/')) {
-//     cb(null, true);
-//   } else {
-//     cb(new Error('Only image files are allowed!'), false);
-//   }
-// };
-
-// const upload = multer({ 
-//   storage: storage,
-//   fileFilter: fileFilter,
-//   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-// });
-
-// // @desc    Get user profile
-// // @route   GET /api/users/profile
-// // @access  Private
-// export const getUserProfile = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user._id).populate('shippingAddress');
-  
-//   if (user) {
-//     res.json({
-//       _id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       phone: user.phone || '',
-//       profileImage: user.profileImage || '',
-//       address: user.shippingAddress ? user.shippingAddress.address : '',
-//       street: user.shippingAddress ? user.shippingAddress.street : '',
-//       city: user.shippingAddress ? user.shippingAddress.city : '',
-//     });
-//   } else {
-//     res.status(404);
-//     throw new Error('User not found');
-//   }
-// });
-
-// // @desc    Update user profile
-// // @route   PUT /api/users/profile
-// // @access  Private
-// export const updateUserProfile = asyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user._id);
-  
-//   if (user) {
-//     // Update basic user info
-//     user.name = req.body.name || user.name;
-//     user.email = req.body.email || user.email;
-//     user.phone = req.body.phone || user.phone;
-    
-//     if (req.body.profileImage) {
-//       user.profileImage = req.body.profileImage;
-//     }
-    
-//     // Handle shipping address
-//     if (req.body.address || req.body.street || req.body.city) {
-//       // If user already has a shipping address, update it
-//       if (user.shippingAddress) {
-//         const address = await ShippingAddress.findById(user.shippingAddress);
-//         if (address) {
-//           address.address = req.body.address || address.address;
-//           address.street = req.body.street || address.street;
-//           address.city = req.body.city || address.city;
-//           await address.save();
-//         } else {
-//           // Create new address if the reference exists but the actual document doesn't
-//           const newAddress = await ShippingAddress.create({
-//             address: req.body.address || '',
-//             street: req.body.street || '',
-//             city: req.body.city || ''
-//           });
-//           user.shippingAddress = newAddress._id;
-//         }
-//       } else {
-//         // Create new address if user doesn't have one
-//         const newAddress = await ShippingAddress.create({
-//           address: req.body.address || '',
-//           street: req.body.street || '',
-//           city: req.body.city || ''
-//         });
-//         user.shippingAddress = newAddress._id;
-//       }
-//     }
-    
-//     const updatedUser = await user.save();
-    
-//     // Fetch the updated user with populated address
-//     const populatedUser = await User.findById(updatedUser._id).populate('shippingAddress');
-    
-//     res.json({
-//       _id: populatedUser._id,
-//       name: populatedUser.name,
-//       email: populatedUser.email,
-//       phone: populatedUser.phone || '',
-//       profileImage: populatedUser.profileImage || '',
-//       address: populatedUser.shippingAddress ? populatedUser.shippingAddress.address : '',
-//       street: populatedUser.shippingAddress ? populatedUser.shippingAddress.street : '',
-//       city: populatedUser.shippingAddress ? populatedUser.shippingAddress.city : '',
-//     });
-//   } else {
-//     res.status(404);
-//     throw new Error('User not found');
-//   }
-// });
-
-// // @desc    Upload profile image
-// // @route   POST /api/users/upload-profile-image
-// // @access  Private
-// export const uploadProfileImage = asyncHandler(async (req, res) => {
-//   const uploadSingle = upload.single('profileImage');
-  
-//   uploadSingle(req, res, async function(err) {
-//     if (err instanceof multer.MulterError) {
-//       // A Multer error occurred during upload
-//       res.status(400);
-//       throw new Error(`Multer upload error: ${err.message}`);
-//     } else if (err) {
-//       // An unknown error occurred
-//       res.status(500);
-//       throw new Error(`Unknown upload error: ${err.message}`);
-//     }
-    
-//     // If file upload was successful
-//     if (!req.file) {
-//       res.status(400);
-//       throw new Error('No file uploaded');
-//     }
-    
-//     try {
-//       // Update user profile with new image path
-//       const user = await User.findById(req.user._id);
-      
-//       if (!user) {
-//         res.status(404);
-//         throw new Error('User not found');
-//       }
-      
-//       // Set the image URL (adjust based on your server setup)
-//       const imageUrl = `/uploads/profiles/${req.file.filename}`;
-//       user.profileImage = imageUrl;
-//       await user.save();
-      
-//       res.json({ 
-//         message: 'Profile image uploaded successfully',
-//         imageUrl: imageUrl
-//       });
-//     } catch (error) {
-//       console.error('Error saving image reference:', error);
-//       res.status(500);
-//       throw new Error('Failed to update profile with new image');
-//     }
-//   });
-// });
-
-// // signupModel.js
-// import mongoose from "mongoose";
-// import bcrypt from "bcryptjs";  // Changed to bcryptjs to match controllers
-
-// const userSchema = new mongoose.Schema({
-//   name: { type: String, required: true },
-//   email: { type: String, required: true, unique: true },
-//   password: { type: String, required: true },
-//   profileImage: { type: String, required: false },
-//   googleId: { type: String, required: false },
-//   shippingAddress: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'ShippingAddress', 
-//     required: false
-//   },
-//   isBlocked: { type: Boolean, default: false },
-// });
-
-
-// userSchema.methods.matchPassword = async function (enteredPassword) {
-//   try {
-//     return await bcrypt.compare(enteredPassword, this.password);
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export default mongoose.model("User", userSchema);
-
-// // shippingAddressModel.js
-
-// import mongoose from 'mongoose';
-
-// const shippingAddressSchema = new mongoose.Schema({
-//     address: { type: String, required: true },
-//     street: { type: String, required: true },
-//     city: { type: String, required: true },
-// });
-
-// const ShippingAddress = mongoose.model('ShippingAddress', shippingAddressSchema);
-
-// export default ShippingAddress;
-
-// // userRoutes.js
-// import express from 'express';
-// import User from '../models/signupModel.js';
-// import ShippingAddress from '../models/shippingAddressModel.js';
-// import multer from 'multer';
-// import path from 'path';
+// import jwt from 'jsonwebtoken'; // Make sure to install jsonwebtoken
 
 // const router = express.Router();
+
+// // JWT middleware to protect routes
+// const protect = async (req, res, next) => {
+//   let token;
+  
+//   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+//     try {
+//       token = req.headers.authorization.split(' ')[1];
+//       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key');
+      
+//       // Attach user info to request
+//       req.user = await User.findById(decoded.id).select('-password');
+//       next();
+//     } catch (error) {
+//       console.error(error);
+//       res.status(401).json({ message: 'Not authorized, token failed' });
+//     }
+//   }
+  
+//   if (!token) {
+//     res.status(401).json({ message: 'Not authorized, no token' });
+//   }
+// };
 
 // // Multer setup for file upload
 // const storage = multer.diskStorage({
@@ -408,13 +434,38 @@
 //   },
 // });
 
-// // Get all users
+// // Get user profile data
+// router.get('/users/:id/profile', async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id).populate('shippingAddress');
+    
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+    
+//     res.json({
+//       _id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       phone: user.phone || '',
+//       profileImage: user.profileImage || '',
+//       address: user.shippingAddress ? user.shippingAddress.address : '',
+//       street: user.shippingAddress ? user.shippingAddress.street : '',
+//       city: user.shippingAddress ? user.shippingAddress.city : '',
+//     });
+//   } catch (error) {
+//     console.error('Error fetching user profile:', error);
+//     res.status(500).json({ message: 'Error fetching user profile', error: error.message });
+//   }
+// });
+
+// // Get all users (admin functionality)
 // router.get('/users', async (req, res) => {
 //   try {
 //     const users = await User.find();
 //     res.json(users);
 //   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching users', error });
+//     res.status(500).json({ message: 'Error fetching users', error: error.message });
 //   }
 // });
 
@@ -434,7 +485,7 @@
 //     await user.save();
 //     res.json({ message: `User has been ${isBlocked ? 'blocked' : 'unblocked'}` });
 //   } catch (error) {
-//     res.status(500).json({ message: 'Error updating block status', error });
+//     res.status(500).json({ message: 'Error updating block status', error: error.message });
 //   }
 // });
 
@@ -456,9 +507,18 @@
 //     if (profileImage) user.profileImage = profileImage;
 
 //     await user.save();
-//     res.json({ message: 'User profile updated successfully!', user });
+//     res.json({ 
+//       message: 'User profile updated successfully!',
+//       user: {
+//         _id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         phone: user.phone || '',
+//         profileImage: user.profileImage || '',
+//       }
+//     });
 //   } catch (error) {
-//     res.status(500).json({ message: 'Error updating profile', error });
+//     res.status(500).json({ message: 'Error updating profile', error: error.message });
 //   }
 // });
 
@@ -475,26 +535,42 @@
 //     }
 
 //     if (user.shippingAddress) {
+//       // Update existing address
 //       user.shippingAddress.address = address || user.shippingAddress.address;
 //       user.shippingAddress.street = street || user.shippingAddress.street;
 //       user.shippingAddress.city = city || user.shippingAddress.city;
 
 //       await user.shippingAddress.save();
 //     } else {
+//       // Create new address
 //       const newShippingAddress = new ShippingAddress({
-//         address,
-//         street,
-//         city,
+//         address: address || '',
+//         street: street || '',
+//         city: city || '',
 //       });
 
 //       await newShippingAddress.save();
-//       user.shippingAddress = newShippingAddress;
+//       user.shippingAddress = newShippingAddress._id; // Important: store the ObjectId
 //       await user.save();
 //     }
 
-//     res.json({ message: 'Shipping address updated successfully!', user });
+//     // Re-populate the user with the updated shipping address
+//     const updatedUser = await User.findById(id).populate('shippingAddress');
+
+//     res.json({ 
+//       message: 'Shipping address updated successfully!',
+//       user: {
+//         _id: updatedUser._id,
+//         name: updatedUser.name,
+//         email: updatedUser.email,
+//         address: updatedUser.shippingAddress ? updatedUser.shippingAddress.address : '',
+//         street: updatedUser.shippingAddress ? updatedUser.shippingAddress.street : '',
+//         city: updatedUser.shippingAddress ? updatedUser.shippingAddress.city : '',
+//       }
+//     });
 //   } catch (error) {
-//     res.status(500).json({ message: 'Error updating shipping address', error });
+//     console.error('Error updating shipping address:', error);
+//     res.status(500).json({ message: 'Error updating shipping address', error: error.message });
 //   }
 // });
 
@@ -513,149 +589,29 @@
 //       return res.status(404).json({ message: 'User not found' });
 //     }
 
+//     // Set the image URL (adjust based on your server setup)
 //     user.profileImage = `http://localhost:5000/uploads/${req.file.filename}`;
 //     await user.save();
 
-//     res.json({ message: 'Profile image uploaded successfully!', profileImage: user.profileImage });
+//     res.json({ 
+//       message: 'Profile image uploaded successfully!', 
+//       profileImage: user.profileImage 
+//     });
 //   } catch (error) {
-//     res.status(500).json({ message: 'Error uploading profile image', error });
+//     console.error('Error uploading profile image:', error);
+//     res.status(500).json({ message: 'Error uploading profile image', error: error.message });
 //   }
 // });
 
 // export default router;
 
-// // UserProfile.js
+// // // UserProfile.js
 
-// // import React, { useState } from "react";
-// // import { Link } from "react-router-dom";
-// // import MinePic from "../../assets/TeamLeader.jpg";
+// UserProfile.js - Fixed version
 
-// // const UserProfileManagement = () => {
-// //     const [profile, setProfile] = useState({
-// //         name: "Malik Moaz",
-// //         email: "mlkmoaz01@gmail.com",
-// //         phone: "923055865381",
-// //         password: "malikmoaz",
-// //         address: "Punjab University",
-// //         street: "Hostel 17",
-// //         city: "Lahore",
-// //         bill: "PUCIT New Campus",
-// //         billStreet: "Building A",
-// //         billCity: "Lahore",
-// //     });
-
-// //     const [editField, setEditField] = useState(null);
-// //     const [tempData, setTempData] = useState({ ...profile });
-// //     const [sidebarOpen, setSidebarOpen] = useState(false);
-
-// //     const handleEdit = (field) => setEditField(field);
-// //     const handleInputChange = (e) => {
-// //         const { name, value } = e.target;
-// //         setTempData((prev) => ({ ...prev, [name]: value }));
-// //     };
-// //     const handleUpdate = () => {
-// //         setProfile({ ...tempData });
-// //         setEditField(null);
-// //     };
-
-// //     return (
-// //         <div className="min-h-screen flex flex-col md:flex-row relative">
-// //             {/* Sidebar Overlay (Click anywhere to close) */}
-// //             {sidebarOpen && (
-// //                 <div
-// //                     className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-// //                     onClick={() => setSidebarOpen(false)}
-// //                 ></div>
-// //             )}
-
-// //             {/* Sidebar Toggle Button for Mobile */}
-// //             <button
-// //                 className="md:hidden bg-blue-900 text-white py-2 px-4 m-2 rounded z-50"
-// //                 onClick={() => setSidebarOpen(true)}
-// //             >
-// //                 ☰ Menu
-// //             </button>
-
-// //             {/* Sidebar */}
-// //             <aside
-// //                 className={`bg-white w-64 md:w-1/4 p-4 shadow-lg fixed md:relative h-full z-50 transform transition-transform duration-300 ${
-// //                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
-// //                 } md:translate-x-0`}
-// //             >
-// //                 <div className="flex items-center space-x-4 border-b pb-4 mb-4">
-// //                     <img src={MinePic} alt="User Avatar" className="w-12 h-12 rounded-full" />
-// //                     <div>
-// //                         <h2 className="text-lg font-semibold">Hello, {profile.name}</h2>
-// //                     </div>
-// //                 </div>
-// //                 <nav>
-// //                     <ul className="space-y-2">
-// //                         <li><Link to="/account" className="block py-2 px-4 rounded hover:bg-gray-200">Manage Account</Link></li>
-// //                         <li><Link to="/order-history" className="block py-2 px-4 rounded hover:bg-gray-200">My Order History</Link></li>
-// //                         <li><a href="/payment-methods" className="block py-2 px-4 rounded hover:bg-gray-200">Payment Methods</a></li>
-// //                         <li><a href="/" className="block py-2 px-4 rounded hover:bg-gray-200 text-red-600">Log Out</a></li>
-// //                     </ul>
-// //                 </nav>
-// //             </aside>
-
-// //             {/* Main Content */}
-// //             <main className="flex-1 p-4 transition-all duration-300">
-// //                 <h1 className="text-2xl font-semibold mb-4 text-center md:text-left">Account Details</h1>
-
-// //                 {/* Profile Card */}
-// //                 <div className="bg-white p-4 rounded-lg shadow-lg border hover:border-blue-900 mb-4 text-center">
-// //                     <h2 className="text-lg font-semibold mb-4">Profile</h2>
-// //                     {editField === "profile" ? (
-// //                         <div>
-// //                             <input type="text" name="name" value={tempData.name} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-// //                             <input type="email" name="email" value={tempData.email} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-// //                             <input type="text" name="phone" value={tempData.phone} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-// //                             <label className="block mb-2 font-semibold">Upload Profile Picture:</label>
-// //                             <input type="file" accept="image/*" className="block w-full mb-4 p-2 border rounded" />
-// //                             <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
-// //                         </div>
-// //                     ) : (
-// //                         <div>
-// //                             <img src={MinePic} alt="Profile Avatar" className="w-24 h-24 rounded-full mx-auto mb-4" />
-// //                             <p className="mb-2">Name: {profile.name}</p>
-// //                             <p className="mb-2">Email: {profile.email}</p>
-// //                             <p className="mb-2">Phone: {profile.phone}</p>
-// //                             <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("profile")}>Edit</button>
-// //                         </div>
-// //                     )}
-// //                 </div>
-
-// //                 {/* Address Cards */}
-// //                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-// //                     {/* Shipping Address */}
-// //                     <div className="bg-white p-4 rounded-lg shadow border hover:border-blue-800">
-// //                         <h2 className="text-lg font-semibold mb-2">Shipping Address</h2>
-// //                         {editField === "address" ? (
-// //                             <div>
-// //                                 <input type="text" name="address" value={tempData.address} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-// //                                 <input type="text" name="street" value={tempData.street} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-// //                                 <input type="text" name="city" value={tempData.city} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-// //                                 <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
-// //                             </div>
-// //                         ) : (
-// //                             <div>
-// //                                 <p className="mb-2">Address: {profile.address}</p>
-// //                                 <p className="mb-2">Street: {profile.street}</p>
-// //                                 <p className="mb-2">City: {profile.city}</p>
-// //                                 <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("address")}>Edit</button>
-// //                             </div>
-// //                         )}
-// //                     </div>
-// //                 </div>
-// //             </main>
-// //         </div>
-// //     );
-// // };
-
-// // export default UserProfileManagement;
 // import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
-// import axios from "axios"; // Make sure to install axios to make API requests
+// import { Link, useNavigate } from "react-router-dom";
+// import axios from "axios";
 // import MinePic from "../../assets/TeamLeader.jpg";
 
 // const UserProfileManagement = () => {
@@ -671,39 +627,189 @@
 //     const [editField, setEditField] = useState(null);
 //     const [tempData, setTempData] = useState({ ...profile });
 //     const [sidebarOpen, setSidebarOpen] = useState(false);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState(null);
+//     const navigate = useNavigate();
+
+//     // Function to retrieve the user ID and token from local storage
+//     const getUserAuth = () => {
+//         const userString = localStorage.getItem('user');
+//         if (!userString) {
+//             return null;
+//         }
+//         try {
+//             return JSON.parse(userString);
+//         } catch (e) {
+//             console.error("Error parsing user data from localStorage", e);
+//             return null;
+//         }
+//     };
 
 //     // Fetch user data from backend when the component mounts
 //     useEffect(() => {
 //         const fetchUserProfile = async () => {
+//             setLoading(true);
+//             setError(null);
+
+//             const userData = getUserAuth();
+//             if (!userData || !userData.id) {
+//                 setError("You are not logged in. Please log in to view your profile.");
+//                 setLoading(false);
+//                 return;
+//             }
+            
 //             try {
-//                 const response = await axios.get("http://localhost:5000/api/users/profile"); // Update with your API endpoint
-//                 setProfile(response.data);
-//                 setTempData(response.data);
+//                 // Use the endpoint from userRoutes.js
+//                 const response = await axios.get(`http://localhost:5000/api/users/${userData.id}/profile`, {
+//                     headers: {
+//                         Authorization: `Bearer ${userData.token}` // Include token if you're using JWT
+//                     }
+//                 });
+                
+//                 // Transform the data if needed to match your component state
+//                 const profileData = {
+//                     name: response.data.name || "",
+//                     email: response.data.email || "",
+//                     phone: response.data.phone || "",
+//                     address: response.data.address || "",
+//                     street: response.data.street || "",
+//                     city: response.data.city || "",
+//                     profileImage: response.data.profileImage || ""
+//                 };
+                
+//                 setProfile(profileData);
+//                 setTempData(profileData);
+//                 setLoading(false);
 //             } catch (error) {
 //                 console.error("Error fetching user profile data:", error);
+//                 setError("Failed to load profile. Please try again later.");
+//                 setLoading(false);
 //             }
 //         };
+        
 //         fetchUserProfile();
 //     }, []);
 
 //     const handleEdit = (field) => setEditField(field);
+    
 //     const handleInputChange = (e) => {
 //         const { name, value } = e.target;
 //         setTempData((prev) => ({ ...prev, [name]: value }));
 //     };
 
-//     const handleUpdate = async () => {
+//     const handleFileChange = async (e) => {
+//         const file = e.target.files[0];
+//         if (!file) return;
+
+//         const userData = getUserAuth();
+//         if (!userData || !userData.id) {
+//             setError("You are not logged in. Please log in to upload profile images.");
+//             return;
+//         }
+
+//         const formData = new FormData();
+//         formData.append('profileImage', file);
+
 //         try {
-//             // Send updated profile data to the backend
-//             const response = await axios.put("http://localhost:5000/api/users/profile", tempData); // Update with your API endpoint
+//             setLoading(true);
+//             const response = await axios.post(
+//                 `http://localhost:5000/api/users/${userData.id}/upload-profile-image`, 
+//                 formData, 
+//                 {
+//                     headers: {
+//                         'Content-Type': 'multipart/form-data',
+//                         Authorization: `Bearer ${userData.token}`
+//                     }
+//                 }
+//             );
+            
+//             setTempData(prev => ({
+//                 ...prev,
+//                 profileImage: response.data.profileImage
+//             }));
+//             setLoading(false);
+//         } catch (error) {
+//             console.error("Error uploading profile image:", error);
+//             setError("Failed to upload image. Please try again later.");
+//             setLoading(false);
+//         }
+//     };
+
+//     const handleUpdate = async () => {
+//         const userData = getUserAuth();
+//         if (!userData || !userData.id) {
+//             setError("You are not logged in. Please log in to update your profile.");
+//             return;
+//         }
+
+//         try {
+//             setLoading(true);
+            
+//             if (editField === "profile") {
+//                 const profileData = {
+//                     name: tempData.name,
+//                     email: tempData.email,
+//                     phone: tempData.phone,
+//                     profileImage: tempData.profileImage
+//                 };
+                
+//                 await axios.put(
+//                     `http://localhost:5000/api/users/${userData.id}/profile`, 
+//                     profileData,
+//                     {
+//                         headers: {
+//                             Authorization: `Bearer ${userData.token}`
+//                         }
+//                     }
+//                 );
+//             } else if (editField === "address") {
+//                 const addressData = {
+//                     address: tempData.address,
+//                     street: tempData.street,
+//                     city: tempData.city
+//                 };
+                
+//                 await axios.put(
+//                     `http://localhost:5000/api/users/${userData.id}/shipping-address`, 
+//                     addressData,
+//                     {
+//                         headers: {
+//                             Authorization: `Bearer ${userData.token}`
+//                         }
+//                     }
+//                 );
+//             }
+            
 //             setProfile({ ...tempData });
 //             setEditField(null);
+//             setLoading(false);
 //             alert("Profile updated successfully!");
 //         } catch (error) {
 //             console.error("Error updating profile:", error);
+//             setError("Failed to update profile. Please try again later.");
+//             setLoading(false);
 //             alert("Error updating profile!");
 //         }
 //     };
+
+
+//     if (loading && !profile.name) {
+//         return <div className="flex justify-center items-center h-screen">Loading profile...</div>;
+//     }
+
+//     if (error && !profile.name) {
+//         return (
+//             <div className="flex flex-col justify-center items-center h-screen">
+//                 <p className="text-red-500 mb-4">{error}</p>
+//                 <button 
+//                     className="bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-800"
+//                     onClick={() => navigate('/login')}
+//                 >
+//                     Go to Login
+//                 </button>
+//             </div>
+//         );
+//     }
 
 //     return (
 //         <div className="min-h-screen flex flex-col md:flex-row relative">
@@ -730,7 +836,11 @@
 //                 } md:translate-x-0`}
 //             >
 //                 <div className="flex items-center space-x-4 border-b pb-4 mb-4">
-//                     <img src={MinePic} alt="User Avatar" className="w-12 h-12 rounded-full" />
+//                     <img 
+//                         src={profile.profileImage || MinePic} 
+//                         alt="User Avatar" 
+//                         className="w-12 h-12 rounded-full object-cover"
+//                     />
 //                     <div>
 //                         <h2 className="text-lg font-semibold">Hello, {profile.name}</h2>
 //                     </div>
@@ -739,8 +849,8 @@
 //                     <ul className="space-y-2">
 //                         <li><Link to="/account" className="block py-2 px-4 rounded hover:bg-gray-200">Manage Account</Link></li>
 //                         <li><Link to="/order-history" className="block py-2 px-4 rounded hover:bg-gray-200">My Order History</Link></li>
-//                         <li><a href="/payment-methods" className="block py-2 px-4 rounded hover:bg-gray-200">Payment Methods</a></li>
-//                         <li><a href="/" className="block py-2 px-4 rounded hover:bg-gray-200 text-red-600">Log Out</a></li>
+//                         <li><Link to="/payment-methods" className="block py-2 px-4 rounded hover:bg-gray-200">Payment Methods</Link></li>
+                        
 //                     </ul>
 //                 </nav>
 //             </aside>
@@ -748,6 +858,12 @@
 //             {/* Main Content */}
 //             <main className="flex-1 p-4 transition-all duration-300">
 //                 <h1 className="text-2xl font-semibold mb-4 text-center md:text-left">Account Details</h1>
+
+//                 {error && (
+//                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+//                         {error}
+//                     </div>
+//                 )}
 
 //                 {/* Profile Card */}
 //                 <div className="bg-white p-4 rounded-lg shadow-lg border hover:border-blue-900 mb-4 text-center">
@@ -758,16 +874,39 @@
 //                             <input type="email" name="email" value={tempData.email} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
 //                             <input type="text" name="phone" value={tempData.phone} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
 //                             <label className="block mb-2 font-semibold">Upload Profile Picture:</label>
-//                             <input type="file" accept="image/*" className="block w-full mb-4 p-2 border rounded" />
-//                             <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
+//                             <input type="file" accept="image/*" onChange={handleFileChange} className="block w-full mb-4 p-2 border rounded" />
+//                             <div className="flex justify-center space-x-2">
+//                                 <button 
+//                                     className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" 
+//                                     onClick={handleUpdate}
+//                                     disabled={loading}
+//                                 >
+//                                     {loading ? "Updating..." : "Update"}
+//                                 </button>
+//                                 <button 
+//                                     className="mt-2 py-1 px-4 bg-gray-500 text-white rounded hover:bg-gray-600" 
+//                                     onClick={() => setEditField(null)}
+//                                 >
+//                                     Cancel
+//                                 </button>
+//                             </div>
 //                         </div>
 //                     ) : (
 //                         <div>
-//                             <img src={profile.profileImage || MinePic} alt="Profile Avatar" className="w-24 h-24 rounded-full mx-auto mb-4" />
+//                             <img 
+//                                 src={profile.profileImage || MinePic} 
+//                                 alt="Profile Avatar" 
+//                                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover" 
+//                             />
 //                             <p className="mb-2">Name: {profile.name}</p>
 //                             <p className="mb-2">Email: {profile.email}</p>
-//                             <p className="mb-2">Phone: {profile.phone}</p>
-//                             <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("profile")}>Edit</button>
+//                             <p className="mb-2">Phone: {profile.phone || "Not provided"}</p>
+//                             <button 
+//                                 className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" 
+//                                 onClick={() => handleEdit("profile")}
+//                             >
+//                                 Edit
+//                             </button>
 //                         </div>
 //                     )}
 //                 </div>
@@ -782,14 +921,33 @@
 //                                 <input type="text" name="address" value={tempData.address} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
 //                                 <input type="text" name="street" value={tempData.street} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
 //                                 <input type="text" name="city" value={tempData.city} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
-//                                 <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
+//                                 <div className="flex justify-center space-x-2">
+//                                     <button 
+//                                         className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" 
+//                                         onClick={handleUpdate}
+//                                         disabled={loading}
+//                                     >
+//                                         {loading ? "Updating..." : "Update"}
+//                                     </button>
+//                                     <button 
+//                                         className="mt-2 py-1 px-4 bg-gray-500 text-white rounded hover:bg-gray-600" 
+//                                         onClick={() => setEditField(null)}
+//                                     >
+//                                         Cancel
+//                                     </button>
+//                                 </div>
 //                             </div>
 //                         ) : (
 //                             <div>
-//                                 <p className="mb-2">Address: {profile.address}</p>
-//                                 <p className="mb-2">Street: {profile.street}</p>
-//                                 <p className="mb-2">City: {profile.city}</p>
-//                                 <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("address")}>Edit</button>
+//                                 <p className="mb-2">Address: {profile.address || "Not provided"}</p>
+//                                 <p className="mb-2">Street: {profile.street || "Not provided"}</p>
+//                                 <p className="mb-2">City: {profile.city || "Not provided"}</p>
+//                                 <button 
+//                                     className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" 
+//                                     onClick={() => handleEdit("address")}
+//                                 >
+//                                     Edit
+//                                 </button>
 //                             </div>
 //                         )}
 //                     </div>

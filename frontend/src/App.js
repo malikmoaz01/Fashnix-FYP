@@ -16,7 +16,7 @@ import ProductRecommendation from './Components/Admin/ProductRecommendation';
 import ShippingManagement from './Components/Admin/ShippingManagement';
 import Settings from './Components/Admin/Settings';
 import AdminLogin from './Components/Admin/Adminlogin';
-
+import AdminComplain from './Components/Admin/AdminComplains';
 // User components
 import Header from './Components/User/Header';
 import Navbar from './Components/User/Navbar';
@@ -26,6 +26,8 @@ import Login from './Components/User/LoginForm';
 import ProductList from './Components/User/productlist';
 import ProductDetail from './Components/User/ProductDetail'
 import Wishlist from './Components/User/Wishlist';
+import ComplaintChatbot from './Components/User/ComplaintChatbot';
+
 
 // Categories Images & Routes
 import Shirts from './Components/User/Menswear/Shirts';
@@ -108,13 +110,13 @@ function App() {
                     <Routes>
                       <Route path="dashboard" element={<Dashboard />} />
                       <Route path="product_management" element={<ProductManagement />} />
-                      {/* <Route path="admin_view_products" element={<ProductManagement />} /> */}
                       <Route path="order_management" element={<OrderManagement />} />
                       <Route path="user_management" element={<UserManagement />} />
                       <Route path="sales_reports" element={<SalesReports />} />
                       <Route path="discount_management" element={<DiscountManagement />} />
                       <Route path="product_recommendation" element={<ProductRecommendation />} />
                       <Route path="shipping_management" element={<ShippingManagement />} />
+                      <Route path="admin_complain" element={<AdminComplain />} />
                       <Route path="settings" element={<Settings />} />
                     </Routes>
                   </div>
@@ -183,6 +185,7 @@ function App() {
             }
           />
         </Routes>
+        <ComplaintChatbot />
       </Router>
     </GoogleOAuthProvider>
   );

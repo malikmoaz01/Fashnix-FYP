@@ -14,6 +14,14 @@ export const loginUser = async (req, res) => {
       return res.status(404).json({ message: "User not found!" });
     }
 
+    // Block check before password verification
+    if (user.isBlocked) {
+      return res.status(403).json({
+        message: "Your account has been blocked. Please contact support.",
+        blocked: true
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials!" });
@@ -25,6 +33,7 @@ export const loginUser = async (req, res) => {
       name: user.name,
       email: user.email,
       profileImage: user.profileImage,
+      isBlocked: user.isBlocked
     };
 
     res.status(200).json({ message: "Login successful!", user: userForClient });
@@ -39,7 +48,6 @@ export const googleLogin = async (req, res) => {
   try {
     const { googleToken, email, name, profileImage } = req.body;
 
-    // Verify the Google token
     const ticket = await client.verifyIdToken({
       idToken: googleToken,
       audience: GOOGLE_CLIENT_ID,
@@ -67,9 +75,20 @@ export const googleLogin = async (req, res) => {
       });
 
       await user.save();
-    } else if (profileImage && (!user.profileImage || user.profileImage !== profileImage)) {
-      user.profileImage = profileImage;
-      await user.save();
+    } else {
+      // Block check before proceeding
+      if (user.isBlocked) {
+        return res.status(403).json({
+          message: "Your account has been blocked. Please contact support.",
+          blocked: true
+        });
+      }
+
+      // Update profile image if needed
+      if (profileImage && (!user.profileImage || user.profileImage !== profileImage)) {
+        user.profileImage = profileImage;
+        await user.save();
+      }
     }
 
     const userForClient = {
@@ -78,6 +97,7 @@ export const googleLogin = async (req, res) => {
       email: user.email,
       profileImage: user.profileImage,
       isGoogleUser: true,
+      isBlocked: user.isBlocked
     };
 
     return res.status(200).json({
