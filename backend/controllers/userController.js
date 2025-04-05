@@ -1,5 +1,5 @@
-import User from '../models/signupModel.js';
-import ShippingAddress from '../models/shippingAddressModel.js';
+import User from '../models/userModel.js';
+import ShippingAddress from '../models/ShippingAddress.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';

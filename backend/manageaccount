@@ -1,0 +1,802 @@
+// loginController.js
+import bcrypt from "bcryptjs";  
+import User from "../models/signupModel.js";
+import { OAuth2Client } from "google-auth-library";
+
+const GOOGLE_CLIENT_ID = "123922841654-i1jujo69c525uji333d5q2v8rksq5est.apps.googleusercontent.com"; 
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials!" });
+    }
+
+    // Creating a user object without sensitive data
+    const userForClient = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profileImage: user.profileImage,
+    };
+
+    res.status(200).json({ message: "Login successful!", user: userForClient });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error!" });
+  }
+};
+
+// Google Login
+export const googleLogin = async (req, res) => {
+  try {
+    const { googleToken, email, name, profileImage } = req.body;
+
+    // Verify the Google token
+    const ticket = await client.verifyIdToken({
+      idToken: googleToken,
+      audience: GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (payload.email !== email) {
+      return res.status(400).json({ message: "Email verification failed" });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const randomPassword = Math.random().toString(36).slice(-8);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+      user = new User({
+        name,
+        email,
+        password: hashedPassword,
+        profileImage,
+        googleId: payload.sub,
+      });
+
+      await user.save();
+    } else if (profileImage && (!user.profileImage || user.profileImage !== profileImage)) {
+      user.profileImage = profileImage;
+      await user.save();
+    }
+
+    const userForClient = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profileImage: user.profileImage,
+      isGoogleUser: true,
+    };
+
+    return res.status(200).json({
+      message: "Google login successful",
+      user: userForClient,
+    });
+
+  } catch (error) {
+    console.error("Google login error:", error);
+    return res.status(500).json({ message: "Authentication failed" });
+  }
+};
+
+// signupController.js
+
+import bcrypt from "bcryptjs";  // Consistently using bcryptjs
+import User from "../models/signupModel.js";
+import multer from "multer";
+import path from "path";
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); 
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); 
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type, only images are allowed"), false);
+    }
+  },
+});
+
+export const signupUser = async (req, res) => {
+  upload.single("profileImage")(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    try {
+      const { name, email, password } = req.body;
+      const profileImage = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : null;
+
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already exists!" });
+      }
+
+      // Using bcryptjs for hashing
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        profileImage,
+      });
+
+      await newUser.save();
+
+      res.status(201).json({ message: "User registered successfully!" });
+    } catch (error) {
+      console.error("Signup error:", error);
+      res.status(500).json({ message: "Internal server error!" });
+    }
+  });
+};
+
+// userController.js
+import User from '../models/userModel.js';
+import ShippingAddress from '../models/ShippingAddress.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import asyncHandler from 'express-async-handler';
+
+// Create uploads directory if it doesn't exist
+const uploadDir = 'uploads/profiles';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configure multer storage for profile images
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `user-${req.user._id}-${Date.now()}${path.extname(file.originalname)}`);
+  }
+});
+
+// File filter
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+// @desc    Get user profile
+// @route   GET /api/users/profile
+// @access  Private
+export const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).populate('shippingAddress');
+  
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      profileImage: user.profileImage || '',
+      address: user.shippingAddress ? user.shippingAddress.address : '',
+      street: user.shippingAddress ? user.shippingAddress.street : '',
+      city: user.shippingAddress ? user.shippingAddress.city : '',
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+// @access  Private
+export const updateUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  
+  if (user) {
+    // Update basic user info
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.phone = req.body.phone || user.phone;
+    
+    if (req.body.profileImage) {
+      user.profileImage = req.body.profileImage;
+    }
+    
+    // Handle shipping address
+    if (req.body.address || req.body.street || req.body.city) {
+      // If user already has a shipping address, update it
+      if (user.shippingAddress) {
+        const address = await ShippingAddress.findById(user.shippingAddress);
+        if (address) {
+          address.address = req.body.address || address.address;
+          address.street = req.body.street || address.street;
+          address.city = req.body.city || address.city;
+          await address.save();
+        } else {
+          // Create new address if the reference exists but the actual document doesn't
+          const newAddress = await ShippingAddress.create({
+            address: req.body.address || '',
+            street: req.body.street || '',
+            city: req.body.city || ''
+          });
+          user.shippingAddress = newAddress._id;
+        }
+      } else {
+        // Create new address if user doesn't have one
+        const newAddress = await ShippingAddress.create({
+          address: req.body.address || '',
+          street: req.body.street || '',
+          city: req.body.city || ''
+        });
+        user.shippingAddress = newAddress._id;
+      }
+    }
+    
+    const updatedUser = await user.save();
+    
+    // Fetch the updated user with populated address
+    const populatedUser = await User.findById(updatedUser._id).populate('shippingAddress');
+    
+    res.json({
+      _id: populatedUser._id,
+      name: populatedUser.name,
+      email: populatedUser.email,
+      phone: populatedUser.phone || '',
+      profileImage: populatedUser.profileImage || '',
+      address: populatedUser.shippingAddress ? populatedUser.shippingAddress.address : '',
+      street: populatedUser.shippingAddress ? populatedUser.shippingAddress.street : '',
+      city: populatedUser.shippingAddress ? populatedUser.shippingAddress.city : '',
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Upload profile image
+// @route   POST /api/users/upload-profile-image
+// @access  Private
+export const uploadProfileImage = asyncHandler(async (req, res) => {
+  const uploadSingle = upload.single('profileImage');
+  
+  uploadSingle(req, res, async function(err) {
+    if (err instanceof multer.MulterError) {
+      // A Multer error occurred during upload
+      res.status(400);
+      throw new Error(`Multer upload error: ${err.message}`);
+    } else if (err) {
+      // An unknown error occurred
+      res.status(500);
+      throw new Error(`Unknown upload error: ${err.message}`);
+    }
+    
+    // If file upload was successful
+    if (!req.file) {
+      res.status(400);
+      throw new Error('No file uploaded');
+    }
+    
+    try {
+      // Update user profile with new image path
+      const user = await User.findById(req.user._id);
+      
+      if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+      }
+      
+      // Set the image URL (adjust based on your server setup)
+      const imageUrl = `/uploads/profiles/${req.file.filename}`;
+      user.profileImage = imageUrl;
+      await user.save();
+      
+      res.json({ 
+        message: 'Profile image uploaded successfully',
+        imageUrl: imageUrl
+      });
+    } catch (error) {
+      console.error('Error saving image reference:', error);
+      res.status(500);
+      throw new Error('Failed to update profile with new image');
+    }
+  });
+});
+
+// signupModel.js
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";  // Changed to bcryptjs to match controllers
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  profileImage: { type: String, required: false },
+  googleId: { type: String, required: false },
+  shippingAddress: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ShippingAddress', 
+    required: false
+  },
+  isBlocked: { type: Boolean, default: false },
+});
+
+
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  try {
+    return await bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default mongoose.model("User", userSchema);
+
+// shippingAddressModel.js
+
+import mongoose from 'mongoose';
+
+const shippingAddressSchema = new mongoose.Schema({
+    address: { type: String, required: true },
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+});
+
+const ShippingAddress = mongoose.model('ShippingAddress', shippingAddressSchema);
+
+export default ShippingAddress;
+
+// userRoutes.js
+import express from 'express';
+import User from '../models/signupModel.js';
+import ShippingAddress from '../models/shippingAddressModel.js';
+import multer from 'multer';
+import path from 'path';
+
+const router = express.Router();
+
+// Multer setup for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type, only images are allowed'), false);
+    }
+  },
+});
+
+// Get all users
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error });
+  }
+});
+
+// Block or Unblock user
+router.put('/users/:id/block', async (req, res) => {
+  const { id } = req.params;
+  const { isBlocked } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.isBlocked = isBlocked;
+    await user.save();
+    res.json({ message: `User has been ${isBlocked ? 'blocked' : 'unblocked'}` });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating block status', error });
+  }
+});
+
+// Update User Profile
+router.put('/users/:id/profile', async (req, res) => {
+  const { id } = req.params;
+  const { name, email, phone, profileImage } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+    if (profileImage) user.profileImage = profileImage;
+
+    await user.save();
+    res.json({ message: 'User profile updated successfully!', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating profile', error });
+  }
+});
+
+// Update Shipping Address
+router.put('/users/:id/shipping-address', async (req, res) => {
+  const { id } = req.params;
+  const { address, street, city } = req.body;
+
+  try {
+    const user = await User.findById(id).populate('shippingAddress');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.shippingAddress) {
+      user.shippingAddress.address = address || user.shippingAddress.address;
+      user.shippingAddress.street = street || user.shippingAddress.street;
+      user.shippingAddress.city = city || user.shippingAddress.city;
+
+      await user.shippingAddress.save();
+    } else {
+      const newShippingAddress = new ShippingAddress({
+        address,
+        street,
+        city,
+      });
+
+      await newShippingAddress.save();
+      user.shippingAddress = newShippingAddress;
+      await user.save();
+    }
+
+    res.json({ message: 'Shipping address updated successfully!', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating shipping address', error });
+  }
+});
+
+// Upload Profile Image Endpoint
+router.post('/users/:id/upload-profile-image', upload.single('profileImage'), async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.profileImage = `http://localhost:5000/uploads/${req.file.filename}`;
+    await user.save();
+
+    res.json({ message: 'Profile image uploaded successfully!', profileImage: user.profileImage });
+  } catch (error) {
+    res.status(500).json({ message: 'Error uploading profile image', error });
+  }
+});
+
+export default router;
+
+// UserProfile.js
+
+// import React, { useState } from "react";
+// import { Link } from "react-router-dom";
+// import MinePic from "../../assets/TeamLeader.jpg";
+
+// const UserProfileManagement = () => {
+//     const [profile, setProfile] = useState({
+//         name: "Malik Moaz",
+//         email: "mlkmoaz01@gmail.com",
+//         phone: "923055865381",
+//         password: "malikmoaz",
+//         address: "Punjab University",
+//         street: "Hostel 17",
+//         city: "Lahore",
+//         bill: "PUCIT New Campus",
+//         billStreet: "Building A",
+//         billCity: "Lahore",
+//     });
+
+//     const [editField, setEditField] = useState(null);
+//     const [tempData, setTempData] = useState({ ...profile });
+//     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+//     const handleEdit = (field) => setEditField(field);
+//     const handleInputChange = (e) => {
+//         const { name, value } = e.target;
+//         setTempData((prev) => ({ ...prev, [name]: value }));
+//     };
+//     const handleUpdate = () => {
+//         setProfile({ ...tempData });
+//         setEditField(null);
+//     };
+
+//     return (
+//         <div className="min-h-screen flex flex-col md:flex-row relative">
+//             {/* Sidebar Overlay (Click anywhere to close) */}
+//             {sidebarOpen && (
+//                 <div
+//                     className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+//                     onClick={() => setSidebarOpen(false)}
+//                 ></div>
+//             )}
+
+//             {/* Sidebar Toggle Button for Mobile */}
+//             <button
+//                 className="md:hidden bg-blue-900 text-white py-2 px-4 m-2 rounded z-50"
+//                 onClick={() => setSidebarOpen(true)}
+//             >
+//                 ☰ Menu
+//             </button>
+
+//             {/* Sidebar */}
+//             <aside
+//                 className={`bg-white w-64 md:w-1/4 p-4 shadow-lg fixed md:relative h-full z-50 transform transition-transform duration-300 ${
+//                     sidebarOpen ? "translate-x-0" : "-translate-x-full"
+//                 } md:translate-x-0`}
+//             >
+//                 <div className="flex items-center space-x-4 border-b pb-4 mb-4">
+//                     <img src={MinePic} alt="User Avatar" className="w-12 h-12 rounded-full" />
+//                     <div>
+//                         <h2 className="text-lg font-semibold">Hello, {profile.name}</h2>
+//                     </div>
+//                 </div>
+//                 <nav>
+//                     <ul className="space-y-2">
+//                         <li><Link to="/account" className="block py-2 px-4 rounded hover:bg-gray-200">Manage Account</Link></li>
+//                         <li><Link to="/order-history" className="block py-2 px-4 rounded hover:bg-gray-200">My Order History</Link></li>
+//                         <li><a href="/payment-methods" className="block py-2 px-4 rounded hover:bg-gray-200">Payment Methods</a></li>
+//                         <li><a href="/" className="block py-2 px-4 rounded hover:bg-gray-200 text-red-600">Log Out</a></li>
+//                     </ul>
+//                 </nav>
+//             </aside>
+
+//             {/* Main Content */}
+//             <main className="flex-1 p-4 transition-all duration-300">
+//                 <h1 className="text-2xl font-semibold mb-4 text-center md:text-left">Account Details</h1>
+
+//                 {/* Profile Card */}
+//                 <div className="bg-white p-4 rounded-lg shadow-lg border hover:border-blue-900 mb-4 text-center">
+//                     <h2 className="text-lg font-semibold mb-4">Profile</h2>
+//                     {editField === "profile" ? (
+//                         <div>
+//                             <input type="text" name="name" value={tempData.name} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+//                             <input type="email" name="email" value={tempData.email} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+//                             <input type="text" name="phone" value={tempData.phone} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+//                             <label className="block mb-2 font-semibold">Upload Profile Picture:</label>
+//                             <input type="file" accept="image/*" className="block w-full mb-4 p-2 border rounded" />
+//                             <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
+//                         </div>
+//                     ) : (
+//                         <div>
+//                             <img src={MinePic} alt="Profile Avatar" className="w-24 h-24 rounded-full mx-auto mb-4" />
+//                             <p className="mb-2">Name: {profile.name}</p>
+//                             <p className="mb-2">Email: {profile.email}</p>
+//                             <p className="mb-2">Phone: {profile.phone}</p>
+//                             <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("profile")}>Edit</button>
+//                         </div>
+//                     )}
+//                 </div>
+
+//                 {/* Address Cards */}
+//                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+//                     {/* Shipping Address */}
+//                     <div className="bg-white p-4 rounded-lg shadow border hover:border-blue-800">
+//                         <h2 className="text-lg font-semibold mb-2">Shipping Address</h2>
+//                         {editField === "address" ? (
+//                             <div>
+//                                 <input type="text" name="address" value={tempData.address} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+//                                 <input type="text" name="street" value={tempData.street} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+//                                 <input type="text" name="city" value={tempData.city} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+//                                 <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
+//                             </div>
+//                         ) : (
+//                             <div>
+//                                 <p className="mb-2">Address: {profile.address}</p>
+//                                 <p className="mb-2">Street: {profile.street}</p>
+//                                 <p className="mb-2">City: {profile.city}</p>
+//                                 <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("address")}>Edit</button>
+//                             </div>
+//                         )}
+//                     </div>
+//                 </div>
+//             </main>
+//         </div>
+//     );
+// };
+
+// export default UserProfileManagement;
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios"; // Make sure to install axios to make API requests
+import MinePic from "../../assets/TeamLeader.jpg";
+
+const UserProfileManagement = () => {
+    const [profile, setProfile] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        street: "",
+        city: "",
+        profileImage: ""
+    });
+    const [editField, setEditField] = useState(null);
+    const [tempData, setTempData] = useState({ ...profile });
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    // Fetch user data from backend when the component mounts
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/users/profile"); // Update with your API endpoint
+                setProfile(response.data);
+                setTempData(response.data);
+            } catch (error) {
+                console.error("Error fetching user profile data:", error);
+            }
+        };
+        fetchUserProfile();
+    }, []);
+
+    const handleEdit = (field) => setEditField(field);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setTempData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdate = async () => {
+        try {
+            // Send updated profile data to the backend
+            const response = await axios.put("http://localhost:5000/api/users/profile", tempData); // Update with your API endpoint
+            setProfile({ ...tempData });
+            setEditField(null);
+            alert("Profile updated successfully!");
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            alert("Error updating profile!");
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex flex-col md:flex-row relative">
+            {/* Sidebar Overlay (Click anywhere to close) */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                ></div>
+            )}
+
+            {/* Sidebar Toggle Button for Mobile */}
+            <button
+                className="md:hidden bg-blue-900 text-white py-2 px-4 m-2 rounded z-50"
+                onClick={() => setSidebarOpen(true)}
+            >
+                ☰ Menu
+            </button>
+
+            {/* Sidebar */}
+            <aside
+                className={`bg-white w-64 md:w-1/4 p-4 shadow-lg fixed md:relative h-full z-50 transform transition-transform duration-300 ${
+                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                } md:translate-x-0`}
+            >
+                <div className="flex items-center space-x-4 border-b pb-4 mb-4">
+                    <img src={MinePic} alt="User Avatar" className="w-12 h-12 rounded-full" />
+                    <div>
+                        <h2 className="text-lg font-semibold">Hello, {profile.name}</h2>
+                    </div>
+                </div>
+                <nav>
+                    <ul className="space-y-2">
+                        <li><Link to="/account" className="block py-2 px-4 rounded hover:bg-gray-200">Manage Account</Link></li>
+                        <li><Link to="/order-history" className="block py-2 px-4 rounded hover:bg-gray-200">My Order History</Link></li>
+                        <li><a href="/payment-methods" className="block py-2 px-4 rounded hover:bg-gray-200">Payment Methods</a></li>
+                        <li><a href="/" className="block py-2 px-4 rounded hover:bg-gray-200 text-red-600">Log Out</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            {/* Main Content */}
+            <main className="flex-1 p-4 transition-all duration-300">
+                <h1 className="text-2xl font-semibold mb-4 text-center md:text-left">Account Details</h1>
+
+                {/* Profile Card */}
+                <div className="bg-white p-4 rounded-lg shadow-lg border hover:border-blue-900 mb-4 text-center">
+                    <h2 className="text-lg font-semibold mb-4">Profile</h2>
+                    {editField === "profile" ? (
+                        <div>
+                            <input type="text" name="name" value={tempData.name} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+                            <input type="email" name="email" value={tempData.email} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+                            <input type="text" name="phone" value={tempData.phone} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+                            <label className="block mb-2 font-semibold">Upload Profile Picture:</label>
+                            <input type="file" accept="image/*" className="block w-full mb-4 p-2 border rounded" />
+                            <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
+                        </div>
+                    ) : (
+                        <div>
+                            <img src={profile.profileImage || MinePic} alt="Profile Avatar" className="w-24 h-24 rounded-full mx-auto mb-4" />
+                            <p className="mb-2">Name: {profile.name}</p>
+                            <p className="mb-2">Email: {profile.email}</p>
+                            <p className="mb-2">Phone: {profile.phone}</p>
+                            <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("profile")}>Edit</button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Address Cards */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {/* Shipping Address */}
+                    <div className="bg-white p-4 rounded-lg shadow border hover:border-blue-800">
+                        <h2 className="text-lg font-semibold mb-2">Shipping Address</h2>
+                        {editField === "address" ? (
+                            <div>
+                                <input type="text" name="address" value={tempData.address} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+                                <input type="text" name="street" value={tempData.street} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+                                <input type="text" name="city" value={tempData.city} onChange={handleInputChange} className="block w-full mb-2 p-2 border rounded" />
+                                <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={handleUpdate}>Update</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="mb-2">Address: {profile.address}</p>
+                                <p className="mb-2">Street: {profile.street}</p>
+                                <p className="mb-2">City: {profile.city}</p>
+                                <button className="mt-2 py-1 px-4 bg-blue-900 text-white rounded hover:bg-blue-800" onClick={() => handleEdit("address")}>Edit</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default UserProfileManagement;

@@ -1,11 +1,10 @@
-import bcrypt from "bcryptjs";  // Consistently using bcryptjs
+import bcrypt from "bcryptjs";  
 import User from "../models/signupModel.js";
 import { OAuth2Client } from "google-auth-library";
 
 const GOOGLE_CLIENT_ID = "123922841654-i1jujo69c525uji333d5q2v8rksq5est.apps.googleusercontent.com"; 
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-// Standard Login
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -15,7 +14,6 @@ export const loginUser = async (req, res) => {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    // Using bcryptjs for comparison
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials!" });

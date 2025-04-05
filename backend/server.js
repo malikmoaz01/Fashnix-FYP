@@ -20,8 +20,7 @@ connectDB();
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use('/uploads', express.static('uploads'));
 app.use('/api/users', userRoutes);
 app.use("/api", signupRoutes);
 app.use("/api", loginRoutes);
