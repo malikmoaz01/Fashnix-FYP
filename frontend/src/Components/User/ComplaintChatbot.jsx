@@ -103,7 +103,7 @@ const ComplaintChatbot = () => {
       
       setMessages(prevMessages => [
         ...prevMessages,
-        { text: `Your order #${customerInfo.orderNumber} is currently in transit and expected to arrive in 2 business days.`, sender: "bot" }
+        { text: `Your order #${customerInfo.orderNumber} is currently in transit and expected to arrive in this week.`, sender: "bot" }
       ]);
     }, 1500);
   };
@@ -220,9 +220,7 @@ const ComplaintChatbot = () => {
     ]);
     
     const products = [
-      { name: `${category} Product 1`, price: "$29.99", rating: "4.5/5" },
-      { name: `${category} Product 2`, price: "$39.99", rating: "4.7/5" },
-      { name: `${category} Product 3`, price: "$19.99", rating: "4.2/5" },
+      { name: `Click on below Link `, price: "http://localhost:3000/products", rating: "Fashniz" },
     ];
     
     setMessages(prevMessages => [
@@ -362,17 +360,24 @@ const ComplaintChatbot = () => {
     
     if (message.type === "productList") {
       return (
-        <div className="bg-gray-100 p-2 rounded">
-          {message.products.map((product, idx) => (
-            <div key={idx} className="border-b border-gray-200 py-2 last:border-b-0">
-              <div className="font-medium">{product.name}</div>
-              <div className="flex justify-between text-sm">
-                <span>{product.price}</span>
-                <span className="text-yellow-600">★ {product.rating}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+<div className="bg-gray-100 p-2 rounded">
+  {message.products.map((product, idx) => (
+    <div key={idx} className="border-b border-gray-200 py-2 last:border-b-0">
+      <div className="font-medium">{product.name}</div>
+      <div className="flex justify-between text-sm">
+        <a
+          href={product.price}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline hover:text-blue-800"
+        >
+          {product.price}
+        </a>
+        <span className="text-yellow-600">★ {product.rating}</span>
+      </div>
+    </div>
+  ))}
+</div>
       );
     }
     
