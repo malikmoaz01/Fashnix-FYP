@@ -117,6 +117,86 @@ const ProductDetail = () => {
       date: "15 February, 2025",
       comment: "Zabardast product hai. Size chart exact hai aur quality top notch hai. Bohat jald dobara order karunga.",
       avatar: "https://randomuser.me/api/portraits/men/55.jpg"
+    },
+    {
+      id: 1,
+      name: "Ahmed Khan",
+      rating: 5,
+      date: "12 March, 2025",
+      comment: "Masha'Allah! Excellent quality product. Fabric is soft and comfortable. Size fits perfectly. Will definitely order again.",
+      avatar: "https://randomuser.me/api/portraits/men/22.jpg"
+    },
+    {
+      id: 2,
+      name: "Fatima Ali",
+      rating: 4,
+      date: "5 March, 2025",
+      comment: "Very satisfied with the purchase. The quality is good and delivery was on time. Just a bit issue with the color as it's slightly different from the picture.",
+      avatar: "https://randomuser.me/api/portraits/women/65.jpg"
+    },
+    {
+      id: 3,
+      name: "Muhammad Usman",
+      rating: 5,
+      date: "28 February, 2025",
+      comment: "Bohot acha product hai. Mere liye perfect size hai aur quality b achi hai. Delivery b time pe hogayi thi. 10/10 recommend krta hun.",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+    },
+    {
+      id: 4,
+      name: "Ayesha Malik",
+      rating: 3,
+      date: "20 February, 2025",
+      comment: "Product is okay but I expected better quality for this price. The stitching is good but the material could be better.",
+      avatar: "https://randomuser.me/api/portraits/women/42.jpg"
+    },
+    {
+      id: 5,
+      name: "Saad Qureshi",
+      rating: 5,
+      date: "15 February, 2025",
+      comment: "Zabardast product hai. Size chart exact hai aur quality top notch hai. Bohat jald dobara order karunga.",
+      avatar: "https://randomuser.me/api/portraits/men/55.jpg"
+    },
+    {
+      id: 1,
+      name: "Ahmed Khan",
+      rating: 5,
+      date: "12 March, 2025",
+      comment: "Masha'Allah! Excellent quality product. Fabric is soft and comfortable. Size fits perfectly. Will definitely order again.",
+      avatar: "https://randomuser.me/api/portraits/men/22.jpg"
+    },
+    {
+      id: 2,
+      name: "Fatima Ali",
+      rating: 4,
+      date: "5 March, 2025",
+      comment: "Very satisfied with the purchase. The quality is good and delivery was on time. Just a bit issue with the color as it's slightly different from the picture.",
+      avatar: "https://randomuser.me/api/portraits/women/65.jpg"
+    },
+    {
+      id: 3,
+      name: "Muhammad Usman",
+      rating: 5,
+      date: "28 February, 2025",
+      comment: "Bohot acha product hai. Mere liye perfect size hai aur quality b achi hai. Delivery b time pe hogayi thi. 10/10 recommend krta hun.",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+    },
+    {
+      id: 4,
+      name: "Ayesha Malik",
+      rating: 3,
+      date: "20 February, 2025",
+      comment: "Product is okay but I expected better quality for this price. The stitching is good but the material could be better.",
+      avatar: "https://randomuser.me/api/portraits/women/42.jpg"
+    },
+    {
+      id: 5,
+      name: "Saad Qureshi",
+      rating: 5,
+      date: "15 February, 2025",
+      comment: "Zabardast product hai. Size chart exact hai aur quality top notch hai. Bohat jald dobara order karunga.",
+      avatar: "https://randomuser.me/api/portraits/men/55.jpg"
     }
   ];
 
@@ -372,9 +452,7 @@ const ProductDetail = () => {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold">Customer Reviews</h3>
-                <button className="bg-blue-800 hover:bg-pink-600 text-white px-4 py-2 rounded transition-colors">
-                  Write a Review
-                </button>
+
               </div>
               
               {/* Reviews List */}
