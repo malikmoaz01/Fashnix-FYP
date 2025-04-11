@@ -19,7 +19,6 @@ const ComplaintChatbot = () => {
   const [complainDetails, setComplainDetails] = useState("");
   const messagesEndRef = useRef(null);
 
-  // Product categories for e-commerce
   const productCategories = [
     "Men's Shoes",
     "Women's Shoes",
@@ -38,7 +37,6 @@ const ComplaintChatbot = () => {
     "Other Accessories" 
   ];
 
-  // Common greetings and non-complaint phrases
   const greetingPhrases = [
     "hello", "hi", "hey", "good morning", "good afternoon", 
     "good evening", "how are you", "what's up", "help",
@@ -60,11 +58,10 @@ const ComplaintChatbot = () => {
   const isGreeting = (text) => {
     const lowercaseText = text.toLowerCase();
     return greetingPhrases.some(phrase => lowercaseText.includes(phrase)) && 
-           lowercaseText.split(" ").length < 5; // Simple check for short greeting messages
+           lowercaseText.split(" ").length < 5; 
   };
 
   const startChat = () => {
-    // Check if any required fields are empty
     if (!customerInfo.customerName || !customerInfo.email) {
       setMessages([
         ...messages,
@@ -73,7 +70,6 @@ const ComplaintChatbot = () => {
       return;
     }
     
-    // Add welcome message with customer name
     setMessages([
       ...messages,
       { text: `Thank you ${customerInfo.customerName}! How can I help you today? You can check order status, browse products, or file a complaint.`, sender: "bot" }
@@ -95,13 +91,11 @@ const ComplaintChatbot = () => {
   };
 
   const checkOrderStatus = () => {
-    // Simulate order status check
     setMessages(prevMessages => [
       ...prevMessages,
       { text: "Checking order status...", sender: "bot", isLoading: true }
     ]);
     
-    // Simulated API call with timeout
     setTimeout(() => {
       setMessages(prevMessages => 
         prevMessages.filter(msg => !msg.isLoading)
@@ -134,7 +128,6 @@ const ComplaintChatbot = () => {
       { text: "Please select the category for your complaint:", sender: "bot" }
     ]);
     
-    // Add category buttons as a special message type
     setMessages(prevMessages => [
       ...prevMessages,
       { 
@@ -156,14 +149,12 @@ const ComplaintChatbot = () => {
     
     setIsSubmitting(true);
     
-    // Add temporary "processing" indicator
     setMessages(prevMessages => [
       ...prevMessages, 
       { text: "Processing your complaint...", sender: "bot", isLoading: true }
     ]);
 
     try {
-      // Send complaint to server with customer info
       const response = await axios.post("http://localhost:5000/api/complaints", { 
         message: complainDetails,
         customerName: customerInfo.customerName,
@@ -172,12 +163,10 @@ const ComplaintChatbot = () => {
         category: customerInfo.category
       });
       
-      // Remove loading message
       setMessages(prevMessages => 
         prevMessages.filter(msg => !msg.isLoading)
       );
       
-      // Add confirmation message
       setMessages(prevMessages => [
         ...prevMessages, 
         { 
@@ -186,18 +175,15 @@ const ComplaintChatbot = () => {
         }
       ]);
       
-      // Reset complaint mode
       setIsComplaintMode(false);
       setComplainDetails("");
     } catch (error) {
       console.error("Error sending complaint:", error);
       
-      // Remove loading message
       setMessages(prevMessages => 
         prevMessages.filter(msg => !msg.isLoading)
       );
       
-      // Add error message
       setMessages(prevMessages => [
         ...prevMessages, 
         { 
@@ -217,7 +203,6 @@ const ComplaintChatbot = () => {
       { text: "Please select a product category to browse:", sender: "bot" }
     ]);
     
-    // Add product category buttons
     setMessages(prevMessages => [
       ...prevMessages,
       { 
@@ -234,7 +219,6 @@ const ComplaintChatbot = () => {
       { text: `Showing top products in ${category}:`, sender: "bot" }
     ]);
     
-    // Simulated product list based on category
     const products = [
       { name: `${category} Product 1`, price: "$29.99", rating: "4.5/5" },
       { name: `${category} Product 2`, price: "$39.99", rating: "4.7/5" },
@@ -257,18 +241,14 @@ const ComplaintChatbot = () => {
 
     const messageText = newMessage.trim();
     
-    // Add user message to chat
     const userMessage = { text: messageText, sender: "user" };
     setMessages(prevMessages => [...prevMessages, userMessage]);
     
-    // Clear input
     setNewMessage("");
     
-    // Handle complaint mode separately
     if (isComplaintMode) {
       setComplainDetails(messageText);
       
-      // Show confirmation step
       setMessages(prevMessages => [
         ...prevMessages,
         { 
@@ -281,7 +261,6 @@ const ComplaintChatbot = () => {
       return;
     }
     
-    // Check for order status commands
     if (messageText.toLowerCase().includes("order status") || 
         messageText.toLowerCase().includes("track") || 
         messageText.toLowerCase().includes("where is my order")) {
@@ -289,7 +268,6 @@ const ComplaintChatbot = () => {
       return;
     }
     
-    // Check for product browsing commands
     if (messageText.toLowerCase().includes("browse") || 
         messageText.toLowerCase().includes("show products") || 
         messageText.toLowerCase().includes("catalog")) {
@@ -297,7 +275,6 @@ const ComplaintChatbot = () => {
       return;
     }
     
-    // Check for complaint intent
     if (messageText.toLowerCase().includes("complaint") || 
         messageText.toLowerCase().includes("issue") || 
         messageText.toLowerCase().includes("problem") || 
@@ -306,7 +283,6 @@ const ComplaintChatbot = () => {
       return;
     }
     
-    // Check if it's just a greeting or general message
     if (isGreeting(messageText)) {
       setMessages(prevMessages => [
         ...prevMessages,
@@ -318,7 +294,6 @@ const ComplaintChatbot = () => {
       return;
     }
     
-    // Handle as a potential complaint but ask for confirmation
     setMessages(prevMessages => [
       ...prevMessages,
       { 
