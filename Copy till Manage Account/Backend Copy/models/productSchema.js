@@ -39,7 +39,7 @@ const productSchema = new mongoose.Schema(
     subsubcategory: {
       type: String,
       enum: [
-        // For Clothing
+        "", // Add this line
         "T-Shirts",
         "Jeans",
         "Jackets",
@@ -49,7 +49,6 @@ const productSchema = new mongoose.Schema(
         "Tops",
         "Abayas",
         "Kurtis",
-        // For Accessories
         "Covers",
         "Chargers",
         "Headphones",
@@ -62,10 +61,9 @@ const productSchema = new mongoose.Schema(
         "Belts",
         "Wallets",
         "Jewelry",
-        // Optional, for clarity
         "None"
       ],
-      default: "None" // Optional field
+      default: "None"
     },
     price: {
       type: Number,

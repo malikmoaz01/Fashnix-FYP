@@ -1,25 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode }  from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null); // Local user state
+  const [user, setUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isBlocked, setIsBlocked] = useState(false);
   const navigate = useNavigate();
 
   // Check user from localStorage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      navigate("/");
-    }
+    // Clear any existing user data first to prevent automatic login
+    const checkStoredUser = () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        
+        // If user is blocked, clear storage and show message
+        if (parsedUser.isBlocked === true) {
+          setIsBlocked(true);
+          localStorage.removeItem("user");
+          return;
+        }
+        
+        // Only set user and navigate if not blocked
+        setUser(parsedUser);
+        navigate("/");
+      }
+    };
+    
+    checkStoredUser();
   }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+    setIsBlocked(false);
 
     try {
       const response = await fetch("http://localhost:5000/api/login", {
@@ -30,33 +49,49 @@ const LoginForm = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        alert(data.message || "Login failed!");
-      } else {
-        // Successful login
-        alert(data.message);
-
-        // Save user data to state + localStorage
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        
-        // Dispatch storage updated event for Navbar to detect
-        window.dispatchEvent(new Event('storageUpdated'));
-
-        // Navigate to home/dashboard
-        navigate("/");
+      // CRITICAL: Check if user is blocked before proceeding
+      if (data.user && data.user.isBlocked === true) {
+        setIsBlocked(true);
+        setErrorMessage("Your account has been blocked due to excessive order cancellations. Please contact admin.");
+        // Clear any existing user data to prevent auto-login
+        localStorage.removeItem("user");
+        return;
       }
+
+      if (!response.ok) {
+        setErrorMessage(data.message || "Login failed!");
+        return;
+      }
+
+      // Double-check isBlocked flag again to be extra safe
+      if (data.user && data.user.isBlocked === true) {
+        setIsBlocked(true);
+        setErrorMessage("Your account has been blocked due to excessive order cancellations. Please contact admin.");
+        return;
+      }
+
+      // Only proceed with login if user is not blocked
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      // Dispatch storage updated event for Navbar to detect
+      window.dispatchEvent(new Event('storageUpdated'));
+
+      // Navigate to home/dashboard
+      navigate("/");
     } catch (error) {
       console.error("Login error:", error);
-      alert("Something went wrong. Please try again later.");
+      setErrorMessage("Something went wrong. Please try again later.");
     }
   };
   
   const handleGoogleLogin = async (credentialResponse) => {
+    setErrorMessage("");
+    setIsBlocked(false);
+    
     try {
       // Decode the credential to get user info
       const decodedToken = jwtDecode(credentialResponse.credential);
-      console.log("Google User Info:", decodedToken);
       
       // Send Google token to your backend
       const response = await fetch("http://localhost:5000/api/google-login", {
@@ -66,33 +101,67 @@ const LoginForm = () => {
           googleToken: credentialResponse.credential,
           email: decodedToken.email,
           name: decodedToken.name,
-          profileImage: decodedToken.picture // Match your schema field name
+          profileImage: decodedToken.picture
         }),
       });
 
       const data = await response.json();
 
-      if (!response.ok) {
-        alert(data.message || "Google login failed!");
-      } else {
-        // Successful login
-        alert("Successfully logged in with Google!");
-
-        // Save user data to state + localStorage
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        
-        // Dispatch storage updated event for Navbar to detect
-        window.dispatchEvent(new Event('storageUpdated'));
-
-        // Navigate to home/dashboard
-        navigate("/");
+      // CRITICAL: Check if user is blocked before proceeding
+      if (data.user && data.user.isBlocked === true) {
+        setIsBlocked(true);
+        setErrorMessage("Your account has been blocked due to excessive order cancellations. Please contact admin.");
+        // Clear any existing user data
+        localStorage.removeItem("user");
+        return;
       }
+
+      if (!response.ok) {
+        setErrorMessage(data.message || "Google login failed!");
+        return;
+      }
+
+      // Double-check isBlocked flag again to be extra safe
+      if (data.user && data.user.isBlocked === true) {
+        setIsBlocked(true);
+        setErrorMessage("Your account has been blocked due to excessive order cancellations. Please contact admin.");
+        return;
+      }
+
+      // Only proceed with login if user is not blocked
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      // Dispatch storage updated event for Navbar to detect
+      window.dispatchEvent(new Event('storageUpdated'));
+
+      // Navigate to home/dashboard
+      navigate("/");
     } catch (error) {
       console.error("Google login error:", error);
-      alert("Something went wrong with Google login. Please try again later.");
+      setErrorMessage("Something went wrong with Google login. Please try again later.");
     }
   };
+
+  // Function to check for blocked users that might still be in localStorage
+  const checkAndClearBlockedUser = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      if (parsedUser.isBlocked === true) {
+        localStorage.removeItem("user");
+        setIsBlocked(true);
+        setErrorMessage("Your account has been blocked due to excessive order cancellations. Please contact admin.");
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Call this function on component mount
+  useEffect(() => {
+    checkAndClearBlockedUser();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4 sm:p-6 lg:p-10">
@@ -103,6 +172,22 @@ const LoginForm = () => {
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-4">
           Login
         </h1>
+
+        {/* Blocked user message */}
+        {isBlocked && (
+          <div className="mb-4 p-4 text-white bg-red-600 rounded-lg">
+            <p className="font-bold mb-1">Account Blocked</p>
+            <p>You cannot log in because you've cancelled more than 5 orders in the past month.</p>
+            <p className="mt-2">Please contact admin to restore your account access.</p>
+          </div>
+        )}
+
+        {/* General error message */}
+        {errorMessage && !isBlocked && (
+          <div className="mb-4 p-3 text-red-700 bg-red-100 rounded-lg">
+            {errorMessage}
+          </div>
+        )}
 
         <form className="space-y-4" onSubmit={handleLogin}>
           {/* Email */}
@@ -158,7 +243,7 @@ const LoginForm = () => {
               onSuccess={handleGoogleLogin}
               onError={() => {
                 console.error('Google Login Failed');
-                alert("Google login failed. Please try again.");
+                setErrorMessage("Google login failed. Please try again.");
               }}
               useOneTap={true}
               theme="filled_blue"

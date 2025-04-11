@@ -1,44 +1,36 @@
-// import express from 'express';
-// import User from '../models/signupModel.js'; 
-// const router = express.Router();
+// userRoutes.js - Modified version
 
-// router.get('/users', async (req, res) => {
-//   try {
-//     const users = await User.find(); 
-//     res.json(users);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching users', error });
-//   }
-// });
-
-// router.put('/users/:id/block', async (req, res) => {
-//   const { id } = req.params;
-//   const { isBlocked } = req.body; 
-
-//   try {
-//     const user = await User.findById(id);
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     user.isBlocked = isBlocked; 
-
-//     await user.save();
-//     res.json({ message: `User has been ${isBlocked ? 'blocked' : 'unblocked'}` });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error updating block status', error });
-//   }
-// });
-
-// export default router;
 import express from 'express';
 import User from '../models/signupModel.js';
-import ShippingAddress from '../models/shippingAddressModel.js';
+import ShippingAddress from '../models/ShippingAddress.js';
 import multer from 'multer';
 import path from 'path';
+import jwt from 'jsonwebtoken'; // Make sure to install jsonwebtoken
 
 const router = express.Router();
+
+// JWT middleware to protect routes
+const protect = async (req, res, next) => {
+  let token;
+  
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key');
+      
+      // Attach user info to request
+      req.user = await User.findById(decoded.id).select('-password');
+      next();
+    } catch (error) {
+      console.error(error);
+      res.status(401).json({ message: 'Not authorized, token failed' });
+    }
+  }
+  
+  if (!token) {
+    res.status(401).json({ message: 'Not authorized, no token' });
+  }
+};
 
 // Multer setup for file upload
 const storage = multer.diskStorage({
@@ -62,13 +54,38 @@ const upload = multer({
   },
 });
 
-// Get all users
+// Get user profile data
+router.get('/users/:id/profile', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('shippingAddress');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      profileImage: user.profileImage || '',
+      address: user.shippingAddress ? user.shippingAddress.address : '',
+      street: user.shippingAddress ? user.shippingAddress.street : '',
+      city: user.shippingAddress ? user.shippingAddress.city : '',
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Error fetching user profile', error: error.message });
+  }
+});
+
+// Get all users (admin functionality)
 router.get('/users', async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching users', error });
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 });
 
@@ -88,7 +105,7 @@ router.put('/users/:id/block', async (req, res) => {
     await user.save();
     res.json({ message: `User has been ${isBlocked ? 'blocked' : 'unblocked'}` });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating block status', error });
+    res.status(500).json({ message: 'Error updating block status', error: error.message });
   }
 });
 
@@ -110,9 +127,18 @@ router.put('/users/:id/profile', async (req, res) => {
     if (profileImage) user.profileImage = profileImage;
 
     await user.save();
-    res.json({ message: 'User profile updated successfully!', user });
+    res.json({ 
+      message: 'User profile updated successfully!',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        profileImage: user.profileImage || '',
+      }
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating profile', error });
+    res.status(500).json({ message: 'Error updating profile', error: error.message });
   }
 });
 
@@ -129,26 +155,42 @@ router.put('/users/:id/shipping-address', async (req, res) => {
     }
 
     if (user.shippingAddress) {
+      // Update existing address
       user.shippingAddress.address = address || user.shippingAddress.address;
       user.shippingAddress.street = street || user.shippingAddress.street;
       user.shippingAddress.city = city || user.shippingAddress.city;
 
       await user.shippingAddress.save();
     } else {
+      // Create new address
       const newShippingAddress = new ShippingAddress({
-        address,
-        street,
-        city,
+        address: address || '',
+        street: street || '',
+        city: city || '',
       });
 
       await newShippingAddress.save();
-      user.shippingAddress = newShippingAddress;
+      user.shippingAddress = newShippingAddress._id; // Important: store the ObjectId
       await user.save();
     }
 
-    res.json({ message: 'Shipping address updated successfully!', user });
+    // Re-populate the user with the updated shipping address
+    const updatedUser = await User.findById(id).populate('shippingAddress');
+
+    res.json({ 
+      message: 'Shipping address updated successfully!',
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        address: updatedUser.shippingAddress ? updatedUser.shippingAddress.address : '',
+        street: updatedUser.shippingAddress ? updatedUser.shippingAddress.street : '',
+        city: updatedUser.shippingAddress ? updatedUser.shippingAddress.city : '',
+      }
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating shipping address', error });
+    console.error('Error updating shipping address:', error);
+    res.status(500).json({ message: 'Error updating shipping address', error: error.message });
   }
 });
 
@@ -167,12 +209,17 @@ router.post('/users/:id/upload-profile-image', upload.single('profileImage'), as
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Set the image URL (adjust based on your server setup)
     user.profileImage = `http://localhost:5000/uploads/${req.file.filename}`;
     await user.save();
 
-    res.json({ message: 'Profile image uploaded successfully!', profileImage: user.profileImage });
+    res.json({ 
+      message: 'Profile image uploaded successfully!', 
+      profileImage: user.profileImage 
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error uploading profile image', error });
+    console.error('Error uploading profile image:', error);
+    res.status(500).json({ message: 'Error uploading profile image', error: error.message });
   }
 });
 
