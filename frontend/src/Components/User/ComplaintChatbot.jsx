@@ -12,8 +12,8 @@ const ComplaintChatbot = () => {
     email: "",
     orderNumber: ""
   });
-  const [step, setStep] = useState("welcome"); // welcome -> chat
-  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
+  const [step, setStep] = useState("welcome"); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -65,15 +65,12 @@ const ComplaintChatbot = () => {
     ]);
 
     try {
-      console.log("Sending complaint data:", {
-        message: newMessage,
-        ...customerInfo
-      });
-      
       // Send complaint to server with customer info
-      const response = await axios.post("/api/complaints", { 
+      const response = await axios.post("http://localhost:5000/api/complaints", { 
         message: newMessage,
-        ...customerInfo
+        customerName: customerInfo.customerName,
+        email: customerInfo.email,
+        orderNumber: customerInfo.orderNumber
       });
       
       console.log("Server response:", response.data);

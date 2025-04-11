@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const AdminComplains = () => {
+const AdminComplaints = () => {
   const [complaints, setComplaints] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
@@ -15,8 +15,8 @@ const AdminComplains = () => {
   const fetchComplaints = async () => {
     try {
       setLoading(true);
-      // Updated API endpoint to match your routes
-      const response = await axios.get("/complaints");
+      // Updated API endpoint to match our routes
+      const response = await axios.get("http://localhost:5000/api/complaints");
       setComplaints(response.data);
       setLoading(false);
     } catch (error) {
@@ -27,15 +27,14 @@ const AdminComplains = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      // Updated API endpoint to match your routes
-      await axios.put(`/complaints/${id}`, { status: newStatus });
+      // Updated API endpoint to match our routes
+      await axios.put(`http://localhost:5000/api/complaints/${id}`, { status: newStatus });
       fetchComplaints(); // Refresh complaints list
     } catch (error) {
       console.error("Error updating complaint status:", error);
     }
   };
 
-  // Rest of your component remains the same...
   const viewComplaintDetails = (complaint) => {
     setSelectedComplaint(complaint);
   };
@@ -161,7 +160,7 @@ const AdminComplains = () => {
                           </button>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[#F9FAFB]">
-                          {new Date(complaint.timestamp || complaint.createdAt).toLocaleString()}
+                          {new Date(complaint.createdAt).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(complaint.status)}`}>
@@ -245,7 +244,7 @@ const AdminComplains = () => {
                 </div>
                 <div>
                   <p className="text-[#9CA3AF] text-sm">Date</p>
-                  <p className="text-white">{new Date(selectedComplaint.timestamp || selectedComplaint.createdAt).toLocaleString()}</p>
+                  <p className="text-white">{new Date(selectedComplaint.createdAt).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-[#9CA3AF] text-sm">ID</p>
@@ -290,4 +289,4 @@ const AdminComplains = () => {
   );
 };
 
-export default AdminComplains;
+export default AdminComplaints;
