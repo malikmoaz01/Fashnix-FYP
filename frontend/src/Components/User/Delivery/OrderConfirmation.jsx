@@ -32,7 +32,6 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
     html2pdf().set(opt).from(element).save();
   };
 
-  // Rest of your component remains the same...
   
   useEffect(() => {
     if (!orderId) {
@@ -44,13 +43,11 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        // First attempt to get order from API
         const response = await fetch(`http://localhost:5000/api/orders/${orderId}`);
         
         if (response.ok) {
           const data = await response.json();
           setOrder(data);
-          // Only try to send email if we have order data
           if (data && customerEmail) {
             sendConfirmationEmail(orderId, customerEmail);
           }
@@ -58,38 +55,30 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
           return;
         } 
         
-        // If API fails, check localStorage
         const orders = JSON.parse(localStorage.getItem("orders")) || [];
         const localOrder = orders.find(order => order.orderId === orderId);
 
         if (localOrder) {
           console.log("Found order in localStorage:", localOrder);
-          // Format local order according to schema before saving
           const formattedOrder = formatOrderForSchema(localOrder);
           
           try {
-            // Try to save the order to the database
             const savedOrder = await saveOrderToDatabase(formattedOrder);
             setOrder(savedOrder);
-            
-            // Send confirmation email after order is saved
             if (customerEmail) {
               sendConfirmationEmail(orderId, customerEmail);
             }
           } catch (saveErr) {
             console.error("Error saving order to database:", saveErr);
-            // Even if saving to database fails, still show the order from localStorage
             setOrder(formattedOrder);
           }
         } else {
-          // If we're retrying and still can't find the order
           if (retryCount >= 2) {
             throw new Error("Order not found after multiple attempts");
           }
           
-          // Wait and retry (first-time orders might take time to save)
           setRetryCount(prev => prev + 1);
-          setTimeout(() => fetchOrder(), 2000); // Retry after 2 seconds
+          setTimeout(() => fetchOrder(), 2000); 
           return;
         }
 
@@ -105,13 +94,11 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
   }, [orderId, customerEmail, retryCount]);
 
   const formatOrderForSchema = (localOrder) => {
-    // Get valid status values from your schema
     const validStatusValues = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
     
-    // Ensure we're using a valid status
     let status = localOrder.status || 'pending';
     if (!validStatusValues.includes(status)) {
-      status = 'pending'; // Default to 'pending' if not valid
+      status = 'pending';
     }
   
     return {
@@ -163,10 +150,16 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
 
   const saveOrderToDatabase = async (orderData) => {
     try {
+      // Add a flag to tell the backend to use upsert logic
+      const requestBody = {
+        ...orderData,
+        upsert: true // This tells the backend to update if exists, insert if not
+      };
+      
       const response = await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(requestBody)
       });
       
       if (!response.ok) {
@@ -185,24 +178,35 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
       return savedOrder;
     } catch (err) {
       console.error("Error saving order:", err);
+      
+      // If it's a duplicate key error, try to fetch the existing order instead
+      if (err.message && err.message.includes("duplicate key error")) {
+        try {
+          const fetchResponse = await fetch(`http://localhost:5000/api/orders/${orderData.orderId}`);
+          if (fetchResponse.ok) {
+            const existingOrder = await fetchResponse.json();
+            console.log("Retrieved existing order:", existingOrder);
+            return existingOrder;
+          }
+        } catch (fetchErr) {
+          console.error("Failed to fetch existing order:", fetchErr);
+        }
+      }
+      
       throw err;
     }
   };
 
   const sendConfirmationEmail = async (orderId, email) => {
     try {
-      // Try to send email via API
       const response = await fetch('http://localhost:5000/api/orders/send-confirmation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, email })
       });
-      
-      // Even if API fails, show success to user (fallback)
       setTimeout(() => setEmailSent(true), 1500);
     } catch (err) {
       console.error("Email error:", err);
-      // Still show success to user
       setTimeout(() => setEmailSent(true), 1500);
     }
   };

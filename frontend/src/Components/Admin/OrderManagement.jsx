@@ -238,17 +238,6 @@ const OrderManagement = () => {
             <p className="text-2xl font-bold text-red-400">{stats.cancelled}</p>
           </div>
         </div>
-
-        {/* Debug Stats Information
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mb-4 p-4 bg-[#374151] rounded-lg text-white">
-            <h4 className="font-bold mb-2">Debug Information</h4>
-            <p>Total Orders Loaded: {orders.length}</p>
-            <p>Stats Data: {JSON.stringify(stats)}</p>
-          </div>
-        )} */}
-
-        {/* Search and Filter */}
         <div className="mb-6 flex flex-col md:flex-row justify-between gap-4">
           <div className="flex-1">
             <input

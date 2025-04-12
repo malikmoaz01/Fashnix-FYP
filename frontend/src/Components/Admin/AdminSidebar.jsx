@@ -27,7 +27,7 @@ const Sidebar = () => {
     { elementName: "User Management", icon: <Users size={22} />, elementNav: "/admin/user_management" },
     { elementName: "Sales Reports", icon: <BarChart size={22} />, elementNav: "/admin/sales_reports" },
     { elementName: "Discount Management", icon: <Tags size={22} />, elementNav: "/admin/discount_management" },
-    { elementName: "Product Recommendations", icon: <MessageSquare size={22} />, elementNav: "/admin/product_recommendation" },
+    { elementName: "Recommendations", icon: <MessageSquare size={22} />, elementNav: "/admin/product_recommendation" },
     { elementName: "Shipping Management", icon: <Truck size={22} />, elementNav: "/admin/shipping_management" },
     { elementName: "Complaints", icon: <MessageCircleWarning size={22} />, elementNav: "/admin/admin_complain" },
     { elementName: "Settings", icon: <Settings size={22} />, elementNav: "/admin/settings" },

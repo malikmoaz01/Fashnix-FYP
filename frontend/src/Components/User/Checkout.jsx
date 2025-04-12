@@ -10,7 +10,6 @@ import OrderConfirmation from "./Delivery/OrderConfirmation";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-// Initialize Stripe - replace with your publishable key
 const stripePromise = loadStripe("pk_test_your_stripe_publishable_key");
 
 const Checkout = () => {
@@ -47,7 +46,6 @@ const Checkout = () => {
     orderId: "",
   });
 
-  // Fetch cart data on component mount
   useEffect(() => {
     const loadCartItems = async () => {
       try {
@@ -60,7 +58,6 @@ const Checkout = () => {
           return;
         }
 
-        // Fetch product details for each cart item
         const productDetails = {};
         let subtotal = 0;
         
@@ -84,7 +81,6 @@ const Checkout = () => {
               console.error(`Error fetching product ${item.productId}:`, err);
             }
           } else {
-            // Product already fetched, just add to subtotal
             const price = productDetails[item.productId].discountPrice || 
                          productDetails[item.productId].price;
             subtotal += price * item.quantity;
@@ -109,7 +105,6 @@ const Checkout = () => {
     loadCartItems();
   }, [navigate]);
 
-  // Handle step change
   const nextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1);
     window.scrollTo(0, 0);
@@ -120,7 +115,6 @@ const Checkout = () => {
     window.scrollTo(0, 0);
   };
 
-  // Handle form updates
   const updateCheckoutData = (section, data) => {
     setCheckoutData((prev) => ({
       ...prev,
@@ -128,7 +122,6 @@ const Checkout = () => {
     }));
   };
 
-  // Handle delivery method change with cost update
   const updateDeliveryMethod = (method, cost) => {
     setCheckoutData((prev) => ({
       ...prev,
@@ -137,15 +130,11 @@ const Checkout = () => {
     }));
   };
 
-  // Handle order placement
   const placeOrder = async () => {
     try {
       setLoading(true);
-      
-      // Generate a simple order ID
       const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       
-      // Create order object
       const order = {
         orderId,
         customer: checkoutData.customer,
@@ -159,7 +148,6 @@ const Checkout = () => {
         delivery: checkoutData.delivery,
         payment: {
           method: checkoutData.payment.method,
-          // Don't include full card details in the order
           cardLast4: checkoutData.payment.cardDetails?.last4 || null
         },
         subtotal: checkoutData.subtotal,
@@ -169,31 +157,22 @@ const Checkout = () => {
         createdAt: new Date().toISOString()
       };
       
-      // In a real app, you would send this to your backend API
       console.log("Order placed:", order);
       
-      // For this example, we'll store in localStorage for demonstration
       const orders = JSON.parse(localStorage.getItem("orders")) || [];
       orders.push(order);
       localStorage.setItem("orders", JSON.stringify(orders));
-      
-      // Update checkout data with order ID
       setCheckoutData(prev => ({
         ...prev,
         orderId
       }));
-      
-      // Send confirmation email
+    
       await sendOrderConfirmationEmail(order);
-      
-      // Clear cart
       localStorage.setItem("cart", JSON.stringify([]));
-      
-      // Dispatch custom event to notify header
       window.dispatchEvent(new Event('storageUpdated'));
       
       setLoading(false);
-      nextStep(); // Move to confirmation page
+      nextStep(); 
       
     } catch (error) {
       console.error("Error placing order:", error);
@@ -202,14 +181,9 @@ const Checkout = () => {
     }
   };
   
-  // Send order confirmation email via Resend
   const sendOrderConfirmationEmail = async (order) => {
     try {
-      // In a real app, you would call your backend API to send the email
-      // This is a placeholder for that API call
       console.log("Sending confirmation email for order:", order.orderId);
-      
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       return true;
