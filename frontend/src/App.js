@@ -19,6 +19,7 @@ import ShippingManagement from './Components/Admin/ShippingManagement';
 import Settings from './Components/Admin/Settings';
 import AdminLogin from './Components/Admin/AdminLogin';
 import AdminComplain from './Components/Admin/AdminComplains';
+import OrderConfirmation from './Components/User/Delivery/OrderConfirmation';
 
 // User components
 import Header from './Components/User/Header';
@@ -147,6 +148,7 @@ function App() {
                   <Route path='/contact' element={<ContactForm />} />
                   <Route path='/products' element={<ProductList />} />
                   <Route path="/products/:productId" element={<ProductDetail />} />
+                  <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
                   <Route path="/menswear/shirts" element={<Shirts />} />
                   <Route path="/menswear/tshirts" element={<TShirts />} />
                   <Route path="/menswear/jeans" element={<Jeans />} />
