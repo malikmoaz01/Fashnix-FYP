@@ -254,7 +254,7 @@ export const updateOrder = async (req, res) => {
         }
       } else if (updateData[field] !== undefined) {
         order[field] = updateData[field];
-      }
+      } 
     });
     
     await order.save();

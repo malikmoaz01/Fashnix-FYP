@@ -551,7 +551,6 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
       const savedOrder = await response.json();
       console.log("Order saved successfully:", savedOrder);
       
-      // Clear the order from localStorage after successful save to prevent duplicates
       const orders = JSON.parse(localStorage.getItem("orders")) || [];
       const updatedOrders = orders.filter(order => order.orderId !== orderData.orderId);
       localStorage.setItem("orders", JSON.stringify(updatedOrders));
