@@ -3,32 +3,10 @@ import Order from "../models/orderSchema.js";
 // Create new order
 export const createOrder = async (req, res) => {
   try {
-  //   const orderData = req.body;
-    
-  //   // Check if order already exists (to prevent duplicates)
-  //   const existingOrder = await Order.findOne({ orderId: orderData.orderId });
-    
-  //   if (existingOrder) {
-  //     return res.status(200).json(existingOrder);
-  //   }
-    
-  //   // Create new order
-  //   const newOrder = new Order(orderData);
-  //   await newOrder.save();
-    
-  //   res.status(201).json(newOrder);
-  // } catch (error) {
-  //   console.error("Error creating order:", error);
-  //   res.status(500).json({ 
-  //     message: "Failed to create order", 
-  //     error: error.message 
-  //   });
-  // }
-      // Check if order already exists
+
       const existingOrder = await Order.findOne({ orderId: req.body.orderId });
     
       if (existingOrder) {
-        // Order exists, return it without trying to create a new one
         return res.json(existingOrder);
       }
       
