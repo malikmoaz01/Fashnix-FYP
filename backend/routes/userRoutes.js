@@ -5,8 +5,7 @@ import User from '../models/signupModel.js';
 import ShippingAddress from '../models/ShippingAddress.js';
 import multer from 'multer';
 import path from 'path';
-import jwt from 'jsonwebtoken'; // Make sure to install jsonwebtoken
-
+import jwt from 'jsonwebtoken'; 
 const router = express.Router();
 
 // JWT middleware to protect routes

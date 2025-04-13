@@ -61,7 +61,7 @@ export const sendOrderConfirmationEmail = async (order) => {
 
 export const sendOrderStatusEmail = async (order) => {
   const response = await resend.emails.send({
-    from: "orders@yourstore.com",
+    from: "onboarding@resend.dev",
     to: order.customerEmail,
     subject: `Order #${order.orderId} Status Update`,
     html: `

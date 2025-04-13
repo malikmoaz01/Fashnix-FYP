@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import html2pdf from 'html2pdf.js';
 
-const OrderConfirmation = ({ orderId, customerEmail }) => {
+const OrderConfirmation = ({ orderId, customerEmail , userId = "guest" }) => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -103,6 +103,7 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
   
     return {
       ...localOrder,
+      userId: localOrder.userId || 'guest', 
       status: status,
       createdAt: localOrder.createdAt || new Date().toISOString(),
       items: localOrder.items.map(item => ({
@@ -153,6 +154,7 @@ const OrderConfirmation = ({ orderId, customerEmail }) => {
       // Add a flag to tell the backend to use upsert logic
       const requestBody = {
         ...orderData,
+        userId: orderData.userId || 'guest', // Use a default if not present
         upsert: true // This tells the backend to update if exists, insert if not
       };
       

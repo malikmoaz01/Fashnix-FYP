@@ -247,6 +247,7 @@ const Checkout = () => {
           <OrderConfirmation
             orderId={checkoutData.orderId}
             customerEmail={checkoutData.customer.email}
+             userId="guest"
           />
         );
       default:

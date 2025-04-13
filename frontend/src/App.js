@@ -140,7 +140,7 @@ function App() {
                   <Route path='/wishlist' element={<Wishlist />} />
                   <Route path='/checkout' element={<Checkout />} />
                   <Route path='/account' element={<UserProfile />} />
-                  <Route path='/account/orders' element={<OrderHistory />} />
+                  <Route path='/order-history' element={<OrderHistory />} />
                   <Route path='/account/payment-methods' element={<PaymentMethod />} />
                   <Route path='/product-overview' element={<ProductOverview />} />
                   <Route path='/newArrivals' element={<NewArrival />} />
