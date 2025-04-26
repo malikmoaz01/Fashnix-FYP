@@ -5,7 +5,7 @@ import MoneyBack from '../../assets/Money.png'
 
 const BelowHero1 = () => {
   return (
-    <div className="bg-gradient-to-r from-blue-100 to-pink-100 py-4 px-2">
+    <div className="bg-gradient-to-r from-blue-200 to-pink-300 py-4 px-2">
       <div className="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between gap-1">
         
         <div className="flex flex-col items-center text-center p-2 border border-blue-300 rounded-md shadow-sm bg-white flex-1 mb-1 sm:mb-0">
