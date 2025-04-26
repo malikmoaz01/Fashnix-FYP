@@ -1,7 +1,6 @@
-// controllers/chatbotController.js
+
 import Chatbot from "../models/chatbotModel.js";
 
-// Handle complaint submission
 export const createComplaint = async (req, res) => {
   try {
     const { message, customerName, email, orderNumber } = req.body;
@@ -20,12 +19,11 @@ export const createComplaint = async (req, res) => {
       orderNumber,
       user,
       userType,
-      status: "new", // Set default status to "new" instead of "pending"
+      status: "new", 
     });
 
     await newComplaint.save();
     
-    // Send back a response that includes a reply message for the chatbot
     res.status(201).json({ 
       success: true, 
       message: "Complaint submitted successfully",
