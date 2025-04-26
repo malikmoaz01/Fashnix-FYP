@@ -13,9 +13,6 @@ const Recommended = () => {
       try {
         const res = await fetch('http://localhost:5000/api/products');
         const allProducts = await res.json();
-        
-        // Simulate pre-trained model recommendation approach
-        // In a real application, this would come from a recommendation API
         const recommendedProducts = getRecommendations(allProducts);
         setRecommendedProducts(recommendedProducts);
       } catch (err) {
@@ -81,7 +78,7 @@ const Recommended = () => {
     <div className="bg-gray-100 p-6">
       {/* Section Title with Animation */}
       <h2 className="text-left text-4xl font-bold mb-8 pl-4 flex space-x-1">
-        {Array.from("Recommended Products").map((letter, index) => (
+        {Array.from("Recommendation").map((letter, index) => (
           <span
             key={index}
             className="inline-block animate-color-change"

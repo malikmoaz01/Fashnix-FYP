@@ -27,6 +27,7 @@ const productSchema = new mongoose.Schema(
         "Formal Shoes",
         "Men's Clothing",
         "Women's Clothing",
+        "Kid's Clothing",
         "Men's Watches",
         "Women's Watches",
         "Smartwatches",
@@ -39,7 +40,6 @@ const productSchema = new mongoose.Schema(
     subsubcategory: {
       type: String,
       enum: [
-        "", // Add this line
         "T-Shirts",
         "Jeans",
         "Jackets",
@@ -61,7 +61,7 @@ const productSchema = new mongoose.Schema(
         "Belts",
         "Wallets",
         "Jewelry",
-        "None"
+        "None" // Only this, no empty ""
       ],
       default: "None"
     },
@@ -117,7 +117,7 @@ const productSchema = new mongoose.Schema(
 );
 
 function arrayLimit(val) {
-  return val.length <= 5; 
+  return val.length <= 5;
 }
 
 const Product = mongoose.model("Product", productSchema);

@@ -31,22 +31,6 @@ import ProductList from './Components/User/productlist';
 import ProductDetail from './Components/User/ProductDetail';
 import Wishlist from './Components/User/Wishlist';
 import ComplaintChatbot from './Components/User/ComplaintChatbot';
-import Shirts from './Components/User/Menswear/Shirts';
-import TShirts from './Components/User/Menswear/TShirt';
-import Jeans from './Components/User/Menswear/Jeans';
-import Jackets from './Components/User/Menswear/Jackets';
-import Dresses from './Components/User/Womenswear/Dresses';
-import Tops from './Components/User/Womenswear/Tops';
-import Skirts from './Components/User/Womenswear/Skirts';
-import Sarees from './Components/User/Womenswear/Sarees';
-import KidsTShirts from './Components/User/Kidswear/TShirts';
-import Shorts from './Components/User/Kidswear/Shorts';
-import KidsDresses from './Components/User/Kidswear/Dresses';
-import Nightwear from './Components/User/Kidswear/Nightwear';
-import Bags from './Components/User/Accessories/Bags';
-import Shoes from './Components/User/Accessories/Shoes';
-import Watches from './Components/User/Accessories/Watches';
-import Jewelry from './Components/User/Accessories/Jewelry';
 import About from './Components/User/About';
 import Footer from './Components/User/Footer';
 import Home from './Components/User/Home';
@@ -60,6 +44,14 @@ import ProductOverview from './Components/User/ProductOverview';
 import NewArrival from './Components/User/NewArrival';
 import SaleProducts from './Components/User/SaleProducts';
 import ContactForm from './Components/User/Contact';
+
+// Categories routes
+import MenSwear from './Components/User/Categories/Menswearr';
+import WomenSwear from './Components/User/Categories/Womenswear';
+import KidsSwear from './Components/User/Categories/Kidswear';
+import Accessories from './Components/User/Categories/Accessories';
+import Menshoes from './Components/User/Categories/Menshoes';
+import Womenshoes from './Components/User/Categories/Womenshoes';
 
 function App() {
   const GOOGLE_CLIENT_ID = "123922841654-i1jujo69c525uji333d5q2v8rksq5est.apps.googleusercontent.com";
@@ -149,22 +141,12 @@ function App() {
                   <Route path='/products' element={<ProductList />} />
                   <Route path="/products/:productId" element={<ProductDetail />} />
                   <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
-                  <Route path="/menswear/shirts" element={<Shirts />} />
-                  <Route path="/menswear/tshirts" element={<TShirts />} />
-                  <Route path="/menswear/jeans" element={<Jeans />} />
-                  <Route path="/menswear/jackets" element={<Jackets />} />
-                  <Route path="/womenswear/dresses" element={<Dresses />} />
-                  <Route path="/womenswear/tops" element={<Tops />} />
-                  <Route path="/womenswear/skirts" element={<Skirts />} />
-                  <Route path="/womenswear/sarees" element={<Sarees />} />
-                  <Route path="/kidswear/tshirts" element={<KidsTShirts />} />
-                  <Route path="/kidswear/shorts" element={<Shorts />} />
-                  <Route path="/kidswear/dresses" element={<KidsDresses />} />
-                  <Route path="/kidswear/nightwear" element={<Nightwear />} />
-                  <Route path="/accessories/bags" element={<Bags />} />
-                  <Route path="/accessories/shoes" element={<Shoes />} />
-                  <Route path="/accessories/watches" element={<Watches />} />
-                  <Route path="/accessories/jewelry" element={<Jewelry />} />
+                  <Route path='/products/menswear' element={<MenSwear />} />
+                  <Route path='/products/womenswear' element={<WomenSwear />} />
+                  <Route path='/products/kidswear' element={<KidsSwear />} />
+                  <Route path='/products/accessories' element={<Accessories />} />
+                  <Route path='/products/menshoes' element={<Menshoes />} />
+                  <Route path='/products/womenshoes' element={<Womenshoes />} />
                 </Routes>
                 <Footer />
                 <BelowFooter />
