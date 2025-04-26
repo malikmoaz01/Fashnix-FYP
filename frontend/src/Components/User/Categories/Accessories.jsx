@@ -15,6 +15,20 @@ const Accessories = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
+  // Predefined subcategories for Accessories according to schema
+  const predefinedSubcategories = [
+    'Mobile Accessories',
+    'Laptop Accessories',
+    'Other Accessories'
+  ];
+
+  // Predefined subsubcategories for each subcategory according to schema
+  const predefinedSubsubcategories = {
+    'Mobile Accessories': ['Covers', 'Chargers', 'Headphones', 'Smart Gadgets'],
+    'Laptop Accessories': ['Bags', 'Mouse', 'Cooling Pads', 'Keyboards'],
+    'Other Accessories': ['Sunglasses', 'Belts', 'Wallets', 'Jewelry']
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -39,19 +53,11 @@ const Accessories = () => {
     fetchProducts();
   }, []);
 
-  // Extract unique subcategories for filter
-  const subcategories = [...new Set(products
-    .map(product => product.subcategory))];
-  
-  // Extract unique subsubcategories for filter based on selected subcategory
-  const subsubcategories = [...new Set(products
-    .filter(product => 
-      (!subcategory || product.subcategory === subcategory) && 
-      product.subsubcategory && 
-      product.subsubcategory !== "None" && 
-      product.subsubcategory !== ""
-    )
-    .map(product => product.subsubcategory))];
+  // Get available subsubcategories based on selected subcategory
+  const getAvailableSubsubcategories = () => {
+    if (!subcategory) return [];
+    return predefinedSubsubcategories[subcategory] || [];
+  };
   
   // Price brackets for filter
   const priceBrackets = [
@@ -62,7 +68,7 @@ const Accessories = () => {
     { label: 'Over Rs3,000', value: [3000, 100000] }
   ];
 
-  // Update subsubcategory when subcategory changes
+  // Reset subsubcategory when subcategory changes
   useEffect(() => {
     setSubsubcategory('');
   }, [subcategory]);
@@ -80,7 +86,7 @@ const Accessories = () => {
       );
     }
     
-    // Apply subcategory filter (Mobile, Laptop, etc.)
+    // Apply subcategory filter (Mobile Accessories, Laptop Accessories, etc.)
     if (subcategory) {
       filtered = filtered.filter(product => product.subcategory === subcategory);
     }
@@ -174,7 +180,7 @@ const Accessories = () => {
       <div className={`mb-8 ${showFilters ? 'block' : 'hidden md:block'}`}>
         <div className="bg-white p-4 rounded-lg shadow-sm border border-pink-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between flex-wrap gap-4">
-            {/* Subcategory Filter */}
+            {/* Subcategory Filter - Using predefined values */}
             <div className="w-full md:w-auto">
               <label className="block text-sm font-medium text-pink-500 mb-1">Type</label>
               <select
@@ -183,7 +189,7 @@ const Accessories = () => {
                 className="w-full p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
               >
                 <option value="">All Types</option>
-                {subcategories.map((cat, idx) => (
+                {predefinedSubcategories.map((cat, idx) => (
                   <option key={idx} value={cat}>
                     {cat}
                   </option>
@@ -191,17 +197,17 @@ const Accessories = () => {
               </select>
             </div>
             
-            {/* Subsubcategory Filter */}
+            {/* Subsubcategory Filter - Based on selected subcategory */}
             <div className="w-full md:w-auto">
               <label className="block text-sm font-medium text-pink-500 mb-1">Category</label>
               <select
                 value={subsubcategory}
                 onChange={(e) => setSubsubcategory(e.target.value)}
                 className="w-full p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
-                disabled={!subcategory || subsubcategories.length === 0}
+                disabled={!subcategory}
               >
                 <option value="">All Categories</option>
-                {subsubcategories.map((cat, idx) => (
+                {getAvailableSubsubcategories().map((cat, idx) => (
                   <option key={idx} value={cat}>
                     {cat}
                   </option>
@@ -322,7 +328,7 @@ const Accessories = () => {
                     <h2 className="text-lg font-medium text-gray-800 hover:text-pink-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(product._id)}>
                       {product.name}
                     </h2>
-                    <p className="text-sm text-pink-500 mt-1">{product.subsubcategory || 'Accessories'}</p>
+                    <p className="text-sm text-pink-500 mt-1">{product.subsubcategory !== 'None' ? product.subsubcategory : product.subcategory}</p>
 
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center">

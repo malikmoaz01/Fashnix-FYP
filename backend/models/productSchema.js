@@ -22,9 +22,6 @@ const productSchema = new mongoose.Schema(
       enum: [
         "Men's Shoes",
         "Women's Shoes",
-        "Sports Shoes",
-        "Casual Shoes",
-        "Formal Shoes",
         "Men's Clothing",
         "Women's Clothing",
         "Kid's Clothing",
@@ -40,28 +37,48 @@ const productSchema = new mongoose.Schema(
     subsubcategory: {
       type: String,
       enum: [
+        // Men's Clothing
         "T-Shirts",
         "Jeans",
         "Jackets",
         "Formal Wear",
         "Ethnic Wear",
+        // Women's & Kid's Clothing
         "Dresses",
         "Tops",
         "Abayas",
         "Kurtis",
+        // Men's Shoes
+        "Dress Shoes",
+        "Casual Shoes",
+        "Slipers",
+        "Boots",
+        "Sneakers",
+        "Sandals",
+        // Women's Shoes
+        "Heels",
+        "Flats",
+        "Sneakers",
+        "Sandals",
+        "Boots",
+        "Casual Shoes",
+        // Mobile Accessories
         "Covers",
         "Chargers",
         "Headphones",
         "Smart Gadgets",
+        // Laptop Accessories
         "Bags",
         "Mouse",
         "Cooling Pads",
         "Keyboards",
+        // Other Accessories
         "Sunglasses",
         "Belts",
         "Wallets",
         "Jewelry",
-        "None" // Only this, no empty ""
+        // Default
+        "None"
       ],
       default: "None"
     },

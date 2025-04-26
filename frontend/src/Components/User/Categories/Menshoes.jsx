@@ -38,8 +38,8 @@ const MenShoes = () => {
     fetchProducts();
   }, []);
 
-  // Extract unique shoe types for filter (based on product tags or other attributes)
-  const shoeTypes = ["Sports", "Casual", "Formal", "Loafers", "Boots", "Sandals"];
+  // Extract shoe types from schema subsubcategory enum for men's shoes
+  const shoeTypes = ["Dress Shoes", "Casual Shoes", "Slipers", "Boots", "Sneakers", "Sandals"];
   
   // Price brackets for filter
   const priceBrackets = [
@@ -66,8 +66,7 @@ const MenShoes = () => {
     // Apply shoe type filter if selected
     if (shoeType) {
       filtered = filtered.filter(product => 
-        product.name.toLowerCase().includes(shoeType.toLowerCase()) || 
-        product.description.toLowerCase().includes(shoeType.toLowerCase())
+        product.subsubcategory === shoeType
       );
     }
     
@@ -97,15 +96,12 @@ const MenShoes = () => {
 
   // Function to check if product is out of stock
   const isOutOfStock = (product) => {
-    if (typeof product.stock === 'number') {
-      return product.stock === 0;
+    if (!product.stock || product.stock.length === 0) {
+      return true;
     }
     
-    if (Array.isArray(product.stock)) {
-      return product.stock.every(item => item.quantity === 0);
-    }
-    
-    return false;
+    // Check if all sizes have zero quantity
+    return product.stock.every(item => item.quantity === 0);
   };
 
   // Handle navigate to product detail
@@ -286,7 +282,9 @@ const MenShoes = () => {
                     <h2 className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(product._id)}>
                       {product.name}
                     </h2>
-                    <p className="text-sm text-blue-500 mt-1">Men's Shoes</p>
+                    <p className="text-sm text-blue-500 mt-1">
+                      {product.subsubcategory !== "None" ? product.subsubcategory : "Men's Shoes"}
+                    </p>
 
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center">
@@ -301,8 +299,27 @@ const MenShoes = () => {
                       </div>
                       <div className="flex items-center text-yellow-400">
                         <span className="font-medium">{product.rating}★</span>
+                        {product.reviews > 0 && (
+                          <span className="text-xs text-gray-500 ml-1">({product.reviews})</span>
+                        )}
                       </div>
                     </div>
+
+                    {/* Available Sizes */}
+                    {product.stock && product.stock.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-gray-500">Available Sizes:</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {product.stock
+                            .filter(item => item.quantity > 0)
+                            .map((item, idx) => (
+                              <span key={idx} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">
+                                {item.size}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
 
                     <button
                       disabled={outOfStock}

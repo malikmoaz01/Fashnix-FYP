@@ -38,8 +38,8 @@ const WomenShoes = () => {
     fetchProducts();
   }, []);
 
-  // Extract unique shoe types for filter (based on product tags or other attributes)
-  const shoeTypes = ["Sports", "Casual", "Formal", "Heels", "Flats", "Sandals", "Boots"];
+  // Extract shoe types from schema subsubcategory enum for women's shoes
+  const shoeTypes = ["Heels", "Flats", "Sneakers", "Sandals", "Boots", "Casual Shoes"];
   
   // Price brackets for filter
   const priceBrackets = [
@@ -66,8 +66,7 @@ const WomenShoes = () => {
     // Apply shoe type filter if selected
     if (shoeType) {
       filtered = filtered.filter(product => 
-        product.name.toLowerCase().includes(shoeType.toLowerCase()) || 
-        product.description.toLowerCase().includes(shoeType.toLowerCase())
+        product.subsubcategory === shoeType
       );
     }
     
@@ -97,15 +96,12 @@ const WomenShoes = () => {
 
   // Function to check if product is out of stock
   const isOutOfStock = (product) => {
-    if (typeof product.stock === 'number') {
-      return product.stock === 0;
+    if (!product.stock || product.stock.length === 0) {
+      return true;
     }
     
-    if (Array.isArray(product.stock)) {
-      return product.stock.every(item => item.quantity === 0);
-    }
-    
-    return false;
+    // Check if all sizes have zero quantity
+    return product.stock.every(item => item.quantity === 0);
   };
 
   // Handle navigate to product detail
@@ -286,7 +282,9 @@ const WomenShoes = () => {
                     <h2 className="text-lg font-medium text-gray-800 hover:text-pink-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(product._id)}>
                       {product.name}
                     </h2>
-                    <p className="text-sm text-pink-500 mt-1">Women's Shoes</p>
+                    <p className="text-sm text-pink-500 mt-1">
+                      {product.subsubcategory !== "None" ? product.subsubcategory : "Women's Shoes"}
+                    </p>
 
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center">
@@ -301,15 +299,34 @@ const WomenShoes = () => {
                       </div>
                       <div className="flex items-center text-yellow-400">
                         <span className="font-medium">{product.rating}★</span>
+                        {product.reviews > 0 && (
+                          <span className="text-xs text-gray-500 ml-1">({product.reviews})</span>
+                        )}
                       </div>
                     </div>
+
+                    {/* Available Sizes */}
+                    {product.stock && product.stock.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-gray-500">Available Sizes:</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {product.stock
+                            .filter(item => item.quantity > 0)
+                            .map((item, idx) => (
+                              <span key={idx} className="text-xs bg-pink-50 text-pink-600 px-2 py-1 rounded">
+                                {item.size}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
 
                     <button
                       disabled={outOfStock}
                       className={`mt-4 w-full py-2 rounded-md transition-colors ${
                         outOfStock
                           ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                          : 'bg-blue-500 hover:bg-blue-600 text-white'
+                          : 'bg-pink-500 hover:bg-pink-600 text-white'
                       }`}
                       onClick={() => handleViewDetails(product._id)}
                     >

@@ -13,7 +13,6 @@ const KidsClothing = () => {
   const [sortOption, setSortOption] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [ageGroup, setAgeGroup] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -44,14 +43,7 @@ const KidsClothing = () => {
     .filter(product => product.subsubcategory && product.subsubcategory !== "None" && product.subsubcategory !== "")
     .map(product => product.subsubcategory))];
   
-  // Age groups for kids clothing
-  const ageGroups = [
-    { label: 'All Ages', value: '' },
-    { label: 'Infants (0-2 years)', value: 'infant' },
-    { label: 'Toddlers (2-4 years)', value: 'toddler' },
-    { label: 'Kids (4-7 years)', value: 'kids' },
-    { label: 'Pre-teens (8-12 years)', value: 'pre-teen' }
-  ];
+
   
   // Price brackets for filter
   const priceBrackets = [
@@ -80,13 +72,6 @@ const KidsClothing = () => {
       filtered = filtered.filter(product => product.subsubcategory === subsubcategory);
     }
     
-    // Apply age group filter (assuming you have age group in description or name)
-    if (ageGroup) {
-      filtered = filtered.filter(product => 
-        product.description.toLowerCase().includes(ageGroup) || 
-        product.name.toLowerCase().includes(ageGroup)
-      );
-    }
     
     // Apply price range filter
     filtered = filtered.filter(product => 
@@ -108,7 +93,7 @@ const KidsClothing = () => {
     }
     
     setFilteredProducts(filtered);
-  }, [searchQuery, subsubcategory, ageGroup, priceRange, sortOption, products]);
+  }, [searchQuery, subsubcategory, priceRange, sortOption, products]);
 
   // Function to check if product is out of stock
   const isOutOfStock = (product) => {
@@ -132,7 +117,6 @@ const KidsClothing = () => {
   const resetFilters = () => {
     setSearchQuery('');
     setSubsubcategory('');
-    setAgeGroup('');
     setPriceRange([0, 100000]);
     setSortOption('');
   };
@@ -188,21 +172,7 @@ const KidsClothing = () => {
               </select>
             </div>
             
-            {/* Age Group Filter */}
-            <div className="w-full md:w-auto">
-              <label className="block text-sm font-medium text-pink-500 mb-1">Age Group</label>
-              <select
-                value={ageGroup}
-                onChange={(e) => setAgeGroup(e.target.value)}
-                className="w-full p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
-              >
-                {ageGroups.map((group, idx) => (
-                  <option key={idx} value={group.value}>
-                    {group.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+
             
             {/* Price Range Filter */}
             <div className="w-full md:w-auto">

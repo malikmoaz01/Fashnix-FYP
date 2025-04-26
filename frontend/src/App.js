@@ -21,10 +21,7 @@ import AdminLogin from './Components/Admin/AdminLogin';
 import AdminComplain from './Components/Admin/AdminComplains';
 import OrderConfirmation from './Components/User/Delivery/OrderConfirmation';
 
-// User components
-import Header from './Components/User/Header';
-import Navbar from './Components/User/Navbar';
-import CategoriesDropdown from './Components/User/CategoriesDropdown';
+import Headnav from './Components/User/HeadNav';
 import Signup from './Components/User/SignupForm';
 import Login from './Components/User/LoginForm';
 import ProductList from './Components/User/productlist';
@@ -120,9 +117,7 @@ function App() {
             path="/*"
             element={
               <>
-                <Header />
-                <Navbar onToggleDropdown={() => setDropdownOpen(!dropdownOpen)} />
-                {dropdownOpen && <CategoriesDropdown onNavigate={handleNavigate} />}
+                <Headnav/>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/about-us" element={<About />} />
