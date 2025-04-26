@@ -66,7 +66,6 @@ const OrderManagement = () => {
         
         setStats(statusCounts);
       } else {
-        // Use API-provided stats if available
         setStats({
           total: data.stats.counts.total || 0,
           pending: data.stats.counts.pending || 0,

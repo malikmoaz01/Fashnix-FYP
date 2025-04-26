@@ -11,12 +11,12 @@ const BelowHero = () => {
   const navigate = useNavigate();
 
   const categories = [
-    { image: menTshirtImg, label: "Men's T-Shirts", path: '/menswear/tshirts' },
-    { image: womenDressImg, label: "Women's Dresses", path: '/womenswear/dresses' },
-    { image: kidsWearImg, label: "Kids Wear", path: '/kidswear/dresses' },
-    { image: menShoesImg, label: "Men's Shoes", path: '/menswear/shoes' },
-    { image: womenShoesImg, label: "Women's Shoes", path: '/womenswear/shoes' },
-    { image: accessoriesImg, label: "Accessories", path: '/accessories' },
+    { image: menTshirtImg, label: "Men's Dresses", path: '/products/menswear/tshirts' },
+    { image: womenDressImg, label: "Women's Dresses", path: '/products/womenswear/dresses' },
+    { image: kidsWearImg, label: "Kids Wear", path: '/products/kidswear/dresses' },
+    { image: menShoesImg, label: "Men's Shoes", path: '/products/menswear/shoes' },
+    { image: womenShoesImg, label: "Women's Shoes", path: '/products/womenswear/shoes' },
+    { image: accessoriesImg, label: "Accessories", path: '/products/accessories' },
   ];
 
   return (

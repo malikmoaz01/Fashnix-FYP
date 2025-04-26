@@ -1,0 +1,12 @@
+const response = await axios.get("http://localhost:5000/api/complaints");
+await axios.put`http://localhost:5000/api/complaints/${id}`
+
+fetch('http://localhost:5000/api/orders',
+http://localhost:5000/api/orders/${orderToUpdate}/status
+
+await fetch('http://localhost:5000/api/products');
+http://localhost:5000/api/products/${editProduct._id}
+http://localhost:5000/api/products/${productId}
+http://localhost:5000/api/orders
+http://localhost:5000/api/users
+http://localhost:5000/api/users/${userId}/block

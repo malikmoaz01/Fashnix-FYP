@@ -30,7 +30,6 @@ const Sidebar = () => {
     { elementName: "Recommendations", icon: <MessageSquare size={22} />, elementNav: "/admin/product_recommendation" },
     { elementName: "Shipping Management", icon: <Truck size={22} />, elementNav: "/admin/shipping_management" },
     { elementName: "Complaints", icon: <MessageCircleWarning size={22} />, elementNav: "/admin/admin_complain" },
-    { elementName: "Settings", icon: <Settings size={22} />, elementNav: "/admin/settings" },
   ];
 
   const [activeElement, setActiveElement] = useState(location.pathname);
@@ -39,7 +38,6 @@ const Sidebar = () => {
     setActiveElement(location.pathname);
   }, [location.pathname]);
 
-  // Close sidebar when clicking outside on mobile
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
@@ -49,7 +47,6 @@ const Sidebar = () => {
       }
     };
 
-    // Set initial state based on screen size
     handleResize();
 
     window.addEventListener('resize', handleResize);
