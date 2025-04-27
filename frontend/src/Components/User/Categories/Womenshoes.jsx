@@ -98,7 +98,7 @@ const WomenShoes = () => {
   const isOutOfStock = (product) => {
     if (!product.stock || product.stock.length === 0) {
       return true;
-    }
+    } 
     
     // Check if all sizes have zero quantity
     return product.stock.every(item => item.quantity === 0);

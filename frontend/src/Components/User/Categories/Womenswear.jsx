@@ -298,6 +298,21 @@ const WomenSwear = () => {
                       </div>
                     </div>
 
+                  
+                    {product.stock && product.stock.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-gray-500">Available Sizes:</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {product.stock
+                            .filter(item => item.quantity > 0)
+                            .map((item, idx) => (
+                              <span key={idx} className="text-xs bg-pink-50 text-pink-600 px-2 py-1 rounded">
+                                {item.size}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
                     <button
                       disabled={outOfStock}
                       className={`mt-4 w-full py-2 rounded-md transition-colors ${
