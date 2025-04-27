@@ -72,7 +72,7 @@ const Footer = () => {
 
 					<div className="sm:ml-0 ml-[-200px] flex flex-col items-center gap-4">
 						<div className="flex items-center gap-3 mb-6 justify-center">
-							<a href="http://www.whatsapp.com/03055865381" className="text-gray-300 hover:text-white">
+							<a href="https://wa.me/923055865381" className="text-gray-300 hover:text-white">
 								<FaWhatsapp className="text-3xl" />
 							</a>
 							<a href="http://www.facebook.com/mlkmoaz01" className="text-gray-300 hover:text-white">

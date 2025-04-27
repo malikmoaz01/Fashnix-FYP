@@ -119,7 +119,7 @@ const MenShoes = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen p-4 md:p-6">
-      <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">Men's Shoes Collection</h1>
+      <h1 className="text-3xl font-bold text-center mb-6 text-pink-600">Men's Shoes Collection</h1>
       
       {/* Search Bar */}
       <div className="relative mb-6 max-w-md mx-auto">
@@ -128,9 +128,9 @@ const MenShoes = () => {
           placeholder="Search men's shoes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full p-3 pl-10 pr-4 border border-blue-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full p-3 pl-10 pr-4 border border-pink-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
         />
-        <svg className="absolute left-3 top-3.5 h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute left-3 top-3.5 h-5 w-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
@@ -138,7 +138,7 @@ const MenShoes = () => {
       <div className="md:hidden mb-4">
         <button 
           onClick={() => setShowFilters(!showFilters)}
-          className="w-full py-2 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center font-medium"
+          className="w-full py-2 bg-pink-100 text-pink-600 rounded-md flex items-center justify-center font-medium"
         >
           {showFilters ? 'Hide Filters' : 'Show Filters'}
           <svg className={`ml-2 h-5 w-5 transform ${showFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,15 +149,15 @@ const MenShoes = () => {
       
       {/* Filters Section */}
       <div className={`mb-8 ${showFilters ? 'block' : 'hidden md:block'}`}>
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-pink-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between flex-wrap gap-4">
             {/* Shoe Type Filter */}
             <div className="w-full md:w-auto">
-              <label className="block text-sm font-medium text-blue-500 mb-1">Shoe Type</label>
+              <label className="block text-sm font-medium text-pink-500 mb-1">Shoe Type</label>
               <select
                 value={shoeType}
                 onChange={(e) => setShoeType(e.target.value)}
-                className="w-full p-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
               >
                 <option value="">All Types</option>
                 {shoeTypes.map((type, idx) => (
@@ -170,14 +170,14 @@ const MenShoes = () => {
             
             {/* Price Range Filter */}
             <div className="w-full md:w-auto">
-              <label className="block text-sm font-medium text-blue-500 mb-1">Price Range</label>
+              <label className="block text-sm font-medium text-pink-500 mb-1">Price Range</label>
               <select
                 value={`${priceRange[0]}-${priceRange[1]}`}
                 onChange={(e) => {
                   const values = e.target.value.split('-').map(Number);
                   setPriceRange(values);
                 }}
-                className="w-full p-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
               >
                 {priceBrackets.map((bracket, idx) => (
                   <option key={idx} value={`${bracket.value[0]}-${bracket.value[1]}`}>
@@ -189,11 +189,11 @@ const MenShoes = () => {
             
             {/* Sort Options */}
             <div className="w-full md:w-auto">
-              <label className="block text-sm font-medium text-blue-500 mb-1">Sort By</label>
+              <label className="block text-sm font-medium text-pink-500 mb-1">Sort By</label>
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
-                className="w-full p-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300"
               >
                 <option value="">Recommended</option>
                 <option value="price-low-high">Price: Low to High</option>
@@ -209,7 +209,7 @@ const MenShoes = () => {
             <div className="w-full md:w-auto mt-2 md:mt-6">
               <button
                 onClick={resetFilters}
-                className="w-full md:w-auto px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
+                className="w-full md:w-auto px-4 py-2 bg-pink-50 text-pink-600 border border-pink-200 rounded-md hover:bg-pink-100 transition-colors"
               >
                 Reset Filters
               </button>
@@ -226,20 +226,20 @@ const MenShoes = () => {
       {/* Loading State */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
         </div>
       ) : (
         /* Product Grid */
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-12">
-              <svg className="w-16 h-16 text-blue-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 text-pink-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <p className="text-center text-gray-500">No men's shoes products match your search criteria</p>
               <button 
                 onClick={resetFilters}
-                className="mt-4 px-4 py-2 text-blue-600 hover:text-blue-700 underline"
+                className="mt-4 px-4 py-2 text-pink-600 hover:text-pink-700 underline"
               >
                 Clear all filters
               </button>
@@ -254,7 +254,7 @@ const MenShoes = () => {
                 >
                   {/* Out of Stock Badge */}
                   {outOfStock && (
-                    <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full z-10">
+                    <div className="absolute top-2 right-2 bg-pink-600 text-white text-xs px-2 py-1 rounded-full z-10">
                       Out of Stock
                     </div>
                   )}
@@ -270,7 +270,7 @@ const MenShoes = () => {
                     <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => handleViewDetails(product._id)}
-                        className="bg-white text-blue-600 py-2 px-4 rounded-full font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform"
+                        className="bg-white text-pink-600 py-2 px-4 rounded-full font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform"
                       >
                         Quick View
                       </button>
@@ -279,16 +279,16 @@ const MenShoes = () => {
 
                   {/* Product Info */}
                   <div className="p-4">
-                    <h2 className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(product._id)}>
+                    <h2 className="text-lg font-medium text-gray-800 hover:text-pink-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(product._id)}>
                       {product.name}
                     </h2>
-                    <p className="text-sm text-blue-500 mt-1">
+                    <p className="text-sm text-pink-500 mt-1">
                       {product.subsubcategory !== "None" ? product.subsubcategory : "Men's Shoes"}
                     </p>
 
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center">
-                        <span className="text-lg font-bold text-blue-600">
+                        <span className="text-lg font-bold text-pink-600">
                           Rs{product.discountPrice || product.price}
                         </span>
                         {product.discountPrice && (
@@ -313,7 +313,7 @@ const MenShoes = () => {
                           {product.stock
                             .filter(item => item.quantity > 0)
                             .map((item, idx) => (
-                              <span key={idx} className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">
+                              <span key={idx} className="text-xs bg-pink-50 text-pink-600 px-2 py-1 rounded">
                                 {item.size}
                               </span>
                             ))}
@@ -326,7 +326,7 @@ const MenShoes = () => {
                       className={`mt-4 w-full py-2 rounded-md transition-colors ${
                         outOfStock
                           ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                          : 'bg-blue-500 hover:bg-blue-600 text-white'
+                          : 'bg-pink-500 hover:bg-pink-600 text-white'
                       }`}
                       onClick={() => handleViewDetails(product._id)}
                     >
