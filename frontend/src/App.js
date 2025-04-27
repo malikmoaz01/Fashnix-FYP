@@ -136,6 +136,7 @@ function App() {
                   <Route path='/products' element={<ProductList />} />
                   <Route path="/products/:productId" element={<ProductDetail />} />
                   <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+                  <Route path="/orders/:orderId" element={<OrderConfirmation />} />
                   <Route path='/products/menswear' element={<MenSwear />} />
                   <Route path='/products/womenswear' element={<WomenSwear />} />
                   <Route path='/products/kidswear' element={<KidsSwear />} />

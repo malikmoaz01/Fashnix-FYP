@@ -1,10 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const AddressForm = ({ customerData, updateCustomerData, onNext }) => {
   const [errors, setErrors] = useState({});
+  
+  // Get user data from localStorage on component mount
+  useEffect(() => {
+    const getUserData = () => {
+      const userString = localStorage.getItem('user');
+      if (!userString) return null;
+      
+      try {
+        const userData = JSON.parse(userString);
+        return userData;
+      } catch (e) {
+        console.error("Error parsing user data from localStorage", e);
+        return null;
+      }
+    };
+    
+    // Fetch profile data if available
+    const fetchUserProfile = async () => {
+      const userData = getUserData();
+      if (!userData || !userData.id) return;
+      
+      try {
+        const response = await fetch(`http://localhost:5000/api/users/${userData.id}/profile`, {
+          headers: {
+            Authorization: `Bearer ${userData.token}`
+          }
+        });
+        
+        if (response.ok) {
+          const profileData = await response.json();
+          
+          // Update customer data with profile information
+          updateCustomerData({
+            email: profileData.email,
+            firstName: customerData.firstName || profileData.name?.split(' ')[0] || '',
+            lastName: customerData.lastName || profileData.name?.split(' ').slice(1).join(' ') || '',
+            phone: customerData.phone || profileData.phone || '',
+            address: {
+              ...customerData.address,
+              line1: customerData.address.line1 || profileData.address || '',
+              line2: customerData.address.line2 || profileData.street || '',
+              city: customerData.address.city || profileData.city || '',
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Skip email field changes - email cannot be modified
+    if (name === "email") return;
     
     if (name.startsWith("address.")) {
       const addressField = name.split(".")[1];
@@ -26,7 +81,7 @@ const AddressForm = ({ customerData, updateCustomerData, onNext }) => {
     if (!customerData.firstName) newErrors.firstName = "First name is required";
     if (!customerData.lastName) newErrors.lastName = "Last name is required";
     
-    // Email validation with regex
+    // Email validation with regex - should already be valid since it's from user profile
     if (!customerData.email) {
       newErrors.email = "Email is required";
     } else if (!/^\S+@\S+\.\S+$/.test(customerData.email)) {
@@ -182,24 +237,20 @@ const AddressForm = ({ customerData, updateCustomerData, onNext }) => {
             )}
           </div>
 
-          {/* Email */}
+          {/* Email - Disabled and shows user's email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address *
+              Email Address (From Your Account) *
             </label>
             <input
               type="email"
               id="email"
               name="email"
               value={customerData.email}
-              onChange={handleChange}
-              className={`w-full p-2 border rounded-md ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
+              disabled
+              className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
             />
-            {errors.email && (
-              <p className="text-red-500 text-xs mt-1 error-message">{errors.email}</p>
-            )}
+            <p className="text-xs text-gray-500 mt-1">Email cannot be changed as it's linked to your account</p>
           </div>
 
           {/* Phone */}

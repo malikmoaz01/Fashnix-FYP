@@ -26,7 +26,7 @@ router.post('/orders', createOrder);
 router.get('/orders/:orderId', getOrderById);
 
 // User routes (No authentication)
-router.get('/user/:email/orders', getUserOrders);
+router.get('/orders/user/email/:email', getUserOrders);
 // Add this new route to match frontend request
 router.get('/users/:id/orders', getUserOrders);
 
@@ -48,5 +48,6 @@ router.get('/shipping/active', getActiveShipments);
 
 // Order statistics route - must be placed before the parameterized routes
 router.get('/orders-stats', getOrderStats);
+
 
 export default router;
