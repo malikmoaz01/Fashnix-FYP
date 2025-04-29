@@ -8,7 +8,11 @@
 # https://fashnix.vercel.app/admin/login
 # By using this below credentials
 # username : admin       <-------->       password: 123
-
+----------------------------------------------------------------------------------------------
+# Backend Link
+# https://dashboard.render.com/web/srv-d08j49euk2gs73bc3qc0/deploys/dep-d08j49uuk2gs73bc3qsg
+# https://fashnix-backend.onrender.com
+----------------------------------------------------------------------------------------------
 ## Project Overview
 This project is an E-commerce application that uses machine learning to provide product recommendations. The goal is to give users a personalized shopping experience.
 
