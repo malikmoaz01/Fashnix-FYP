@@ -11,7 +11,6 @@ const TrackOrder = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
-    // Function to retrieve the user data from local storage
     const getUserAuth = () => {
         const userString = localStorage.getItem('user');
         if (!userString) {
@@ -509,7 +508,6 @@ const TrackOrder = () => {
                                             Back
                                         </button>
 
-                                        {/* Cancel Order Button (Only show if order is pending or processing) */}
                                         {['pending', 'processing'].includes(selectedOrder.status.toLowerCase()) && (
                                             <button
                                                 onClick={() => setShowCancelConfirm(true)}
