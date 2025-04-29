@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import html2pdf from 'html2pdf.js';
 
-const OrderConfirmation = ({ orderId, customerEmail , userId = "guest" }) => {
+const OrderConfirmation = ({ orderId, customerEmail, userId = "guest" }) => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -116,10 +116,14 @@ const OrderConfirmation = ({ orderId, customerEmail , userId = "guest" }) => {
       })),
       subtotal: localOrder.subtotal || localOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
       deliveryCost: localOrder.deliveryCost || 0,
+      discount: localOrder.discount || 0, // Make sure discount is included
+      discountInfo: localOrder.discountInfo || null, // Store coupon info
       total: localOrder.total || (
-        localOrder.subtotal || 
-        localOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-      ) + (localOrder.deliveryCost || 0),
+        (localOrder.subtotal || 
+        localOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)) -
+        (localOrder.discount || 0) + 
+        (localOrder.deliveryCost || 0)
+      ),
       customer: {
         firstName: localOrder.customer?.firstName || '',
         lastName: localOrder.customer?.lastName || '',
@@ -324,6 +328,15 @@ const OrderConfirmation = ({ orderId, customerEmail , userId = "guest" }) => {
             <span className="text-gray-600">Subtotal</span>
             <span>{formatCurrency(order.subtotal)}</span>
           </div>
+          
+          {/* Show discount if applied */}
+          {order.discount > 0 && (
+            <div className="flex justify-between mb-2 text-green-700">
+              <span>Discount{order.discountInfo ? ` (${order.discountInfo.name})` : ''}</span>
+              <span>-{formatCurrency(order.discount)}</span>
+            </div>
+          )}
+          
           <div className="flex justify-between mb-2">
             <span className="text-gray-600">Delivery</span>
             <span>{formatCurrency(order.deliveryCost)}</span>
